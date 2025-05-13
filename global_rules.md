@@ -26,6 +26,7 @@ These rules define the organization-wide standards and best practices for all pr
 - Require all tests to pass before merging or deploying.
 - Use semantic versioning for all tags: `vX.Y.Z` or `vX.Y.Z-description`.
 - Commit messages should be clear, descriptive, and follow a consistent convention.
+- **All organization-wide CI/CD and automation best practices are defined in [.cicdrules.md](.cicdrules.md) and must be followed by all projects.**
 
 ## Infrastructure as Code & Cloud
 - Use AWS CloudFormation for all AWS infrastructure.
