@@ -97,6 +97,31 @@ jobs:
 - **Parameterize** where possible, so workflows can be reused across projects or teams.
 - **Document triggers and dependencies**—make it clear when and how each workflow runs, and which rules/memories it references.
 
+### Windsurf Workflows vs. GitHub Actions or other CI/CD workflow tools
+
+> The following comparison helps you choose the right automation tool for each stage of delivery—and shows how Windsurf and GitHub Actions can work together for end-to-end automation.
+
+Windsurf Workflows and GitHub Actions or other CI/CD workflow tools both automate software delivery, but they serve different roles and complement each other:
+
+- **Purpose & Scope:**
+  - *Windsurf Workflows* are AI-assisted and context-aware, automating not just CI/CD but also code generation, documentation, compliance, and more directly within the developer environment.
+  - *GitHub Actions or other CI/CD workflow tools* focus on CI/CD automation in the cloud, triggered by repository events and running on GitHub-hosted infrastructure.
+
+- **Context Awareness:**
+  - *Windsurf* leverages project rules and memories, allowing workflows to dynamically adapt to coding standards, security, and architectural patterns.
+  - *GitHub Actions* operate with repository and environment context, but lack native AI-driven adaptation.
+
+- **Extensibility:**
+  - *Windsurf* workflows can be parameterized and reused, and the AI can compose or modify them based on project needs.
+  - *GitHub Actions* are highly extensible via marketplace actions and custom scripts, but are statically defined in YAML.
+
+- **Execution Location:**
+  - *Windsurf* runs workflows in the local development environment, orchestrated by the AI.
+  - *GitHub Actions* run in isolated cloud runners, focusing on repository state and deployment.
+
+- **Best Practice:**
+  Use Windsurf Workflows for local, AI-driven automation and codebase health, and GitHub Actions for cloud-based CI/CD and deployment. Together, they provide end-to-end automation from code to production.
+
 ## Memories: Institutionalizing Knowledge
 
 This is where Windsurf really shines. Memories are not just notes—they’re structured, persistent records of everything from user stories to architectural decisions.
