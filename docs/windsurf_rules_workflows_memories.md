@@ -1,6 +1,6 @@
-# Rules, Workflows, and Memories: Scaling AI-Driven Software Delivery with Windsurf
+# Using Windsurf Rules, Workflows, and Memories
 
-Over the past two decades, I’ve been obsessed with making software delivery faster, safer, and more repeatable. From my early days automating builds with CruiseControl to authoring “Continuous Integration,” I’ve seen firsthand how the right practices and tools can transform teams. Today, we stand at the threshold of a new era: AI-powered development environments. Tools like Windsurf and Cursor are not just changing how we write code—they’re fundamentally reshaping how we capture knowledge, enforce standards, and automate workflows.
+Over the past two decades, I’ve been obsessed with making software delivery faster, safer, and more repeatable. From my early days automating builds with CruiseControl to authoring “[Continuous Integration](https://www.amazon.com/Continuous-Integration-Improving-Software-Reducing/dp/0321336380),” I’ve seen firsthand how the right practices and tools can transform teams. Today, we stand at the threshold of a new era: AI-powered development environments. Tools like [Windsurf](https://windsurf.com/editor) and [Cursor](https://www.cursor.com/) are not just changing how we write code—they’re fundamentally reshaping how we capture knowledge, enforce standards, and automate workflows.
 
 In this post, I’ll walk through how to use Rules, Workflows, and Memories in Windsurf to create a living, breathing software system. I’ll also compare these concepts to Cursor’s approach, so you can translate practices between environments and scale your own delivery pipelines—no matter which AI-powered IDE you choose.
 
@@ -209,14 +209,6 @@ Below are official and community resources that provide additional detail and va
 - **Getting Started: Rules, Workflows, and Memories (Official Docs):**
   - [Getting Started](https://docs.windsurf.com/windsurf/getting-started)
   - Introduces the core concepts of Rules, Workflows, and Memories, showing their interaction and importance in automating and enforcing standards throughout the software delivery lifecycle.
-
-- **Engineered Meta-Cognitive Workflow Architecture for Windsurf (Community Guide):**
-  - [Meta-Cognitive Workflow Architecture](https://entrepeneur4lyf.github.io/engineered-meta-cognitive-workflow-architecture/)
-  - Step-by-step instructions and real-world examples for setting up global rules, linking them to workflows, and leveraging memories for traceability and compliance.
-
-- **Windsurf v1.8.2 Feature Overview (Community, Chinese):**
-  - [Feature Overview](https://zhuanlan.zhihu.com/p/1905003999091987262)
-  - Practical scenario demonstrating the combined use of Workflows, Rules, and Memories in a Node.js project, including automation of code standards and deployment.
 
 - **Rules for AI Assistants (Windsurf & Cursor Interoperability):**
   - [rules-for-ai GitHub](https://github.com/hashiiiii/rules-for-ai)
