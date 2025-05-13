@@ -81,7 +81,7 @@ Both platforms aim to make coding more collaborative and efficient by deeply int
 
 ### c. Additional Rules Files
 - **Purpose:** Define rules for submodules or components (e.g., `lambda_rules.md`).
-- **Location:** Place in the relevant subdirectory.
+- **Default Location:** Project root: `./lambda_rules.md`
 - **Scaling/Reuse:**
   - Reference these files in the main `README.md` and in related documentation.
   - Use a consistent naming convention and document precedence.
@@ -129,7 +129,8 @@ Both platforms aim to make coding more collaborative and efficient by deeply int
 ## 3. Memories: Persistent Project Knowledge
 
 - **Definition:** Structured, persistent records of user stories, architectural decisions, traceability, and implementation details.
-- **Location:** Managed by Windsurf, surfaced in documentation (e.g., `user_stories.md`, `traceability_matrix.md`).
+- **Default Location:** User home directory: `~/.codeium/windsurf/memories/`
+- **Surfaced In:** Documentation (e.g., `user_stories.md`, `traceability_matrix.md`).
 - **Scaling/Reuse:**
   - Use memories to automate onboarding and provide historical context.
   - Update memories as the project evolves.
