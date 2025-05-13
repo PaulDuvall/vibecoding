@@ -2,7 +2,7 @@
 
 Over the past two decades, I’ve been obsessed with making software delivery faster, safer, and more repeatable. From my early days automating builds with CruiseControl to authoring “Continuous Integration,” I’ve seen firsthand how the right practices and tools can transform teams. Today, we stand at the threshold of a new era: AI-powered development environments. Tools like Windsurf and Cursor are not just changing how we write code—they’re fundamentally reshaping how we capture knowledge, enforce standards, and automate workflows.
 
-In this post, I’ll walk you through how my team uses Rules, Workflows, and Memories in Windsurf to create a living, breathing software system. I’ll also compare these concepts to Cursor’s approach, so you can translate practices between environments and scale your own delivery pipelines—no matter which AI-powered IDE you choose.
+In this post, I’ll walk through how to use Rules, Workflows, and Memories in Windsurf to create a living, breathing software system. I’ll also compare these concepts to Cursor’s approach, so you can translate practices between environments and scale your own delivery pipelines—no matter which AI-powered IDE you choose.
 
 ## Why Rules, Workflows, and Memories Matter
 
