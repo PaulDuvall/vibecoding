@@ -1,0 +1,47 @@
+# Windsurf Workflow: Test & Lint
+#
+# This workflow sets up the Python environment, installs dependencies,
+# runs linting, and executes all tests. It references project rules and
+# memories for context-aware automation and compliance.
+#
+# To reuse: Copy or adapt this file for other projects. Parameterize as needed.
+
+name: Test & Lint
+on:
+  manual: true           # Can be triggered manually
+  push: true             # Or on every code push
+  pull_request: true     # Or on PR events
+
+jobs:
+  setup:
+    steps:
+      - name: Setup Python 3.11 venv
+        run: |
+          python3.11 -m venv .venv
+          source .venv/bin/activate
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+  lint:
+    needs: setup
+    steps:
+      - name: Run flake8 linter
+        run: |
+          source .venv/bin/activate
+          flake8 .
+  test:
+    needs: lint
+    steps:
+      - name: Run pytest
+        run: |
+          source .venv/bin/activate
+          pytest
+  report:
+    needs: test
+    steps:
+      - name: Summarize results and link rules/memories
+        run: |
+          echo "Lint and test results above."
+          echo "Refer to project rules in global_rules.md and .windsurfrules.md for compliance."
+          echo "Consult user_stories.md and traceability_matrix.md for context."
