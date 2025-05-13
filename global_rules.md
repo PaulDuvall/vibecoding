@@ -20,6 +20,7 @@ These rules define the organization-wide standards and best practices for all pr
 - Use AWS KMS, encrypted Parameter Store, or AWS Secrets Manager for secret management.
 - Apply the principle of least privilege to all IAM roles and policies.
 - Enable AWS CloudTrail and schedule regular security audits.
+- **All IAM role and policy authoring, review, and least-privilege best practices are defined in [.iamrolerules.md](.iamrolerules.md) and must be followed by all contributors.**
 
 ## CI/CD, Testing, and Version Control
 - All projects must use automated CI/CD pipelines (e.g., GitHub Actions) for linting, testing, and deployment.
@@ -73,10 +74,10 @@ Maintain a comprehensive, up-to-date change log that documents all project modif
 
 ### 2.12 Fully Automated AWS OIDC Authentication for GitHub Actions
 - **One-Step OIDC Setup:**
-  - Provide a solution that automates the configuration of OpenID Connect (OIDC) between GitHub Actions and AWS. This involves:
-    - Deploying a CloudFormation stack that creates an IAM OIDC Identity Provider, an IAM Role with a trust policy (scoped to your GitHub organization, repository, and branch), and a managed IAM policy with minimal permissions.
-    - Waiting for the CloudFormation deployment to complete.
-    - Retrieving the IAM Role ARN and automatically setting the GitHub repository variable (`AWS_ROLE_TO_ASSUME`) using the GitHub API.
+  - Use the [gha-aws-oidc-bootstrap](https://github.com/PaulDuvall/gha-aws-oidc-bootstrap) tool to automate the configuration of OpenID Connect (OIDC) between GitHub Actions and AWS. This recommended solution:
+    - Deploys a CloudFormation stack that creates an IAM OIDC Identity Provider, an IAM Role with a trust policy (scoped to your GitHub organization, repository, and branch), and a managed IAM policy with minimal permissions.
+    - Waits for the CloudFormation deployment to complete.
+    - Retrieves the IAM Role ARN and automatically sets the GitHub repository variable (`AWS_ROLE_TO_ASSUME`) using the GitHub API.
 - **GitHub Actions Workflow Example:**
   ```yaml
   jobs:
