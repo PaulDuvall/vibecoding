@@ -202,17 +202,15 @@ If you’re looking to scale your team or accelerate delivery, start by making y
 
 Below are official and community resources that provide additional detail and validation for the concepts described in this post:
 
-- **Cascade Memories (Official Docs):**
-  - [Cascade Memories](https://docs.windsurf.com/windsurf/cascade/memories)
-  - Explains how Windsurf’s Cascade agent uses "Memories" to persist user stories, architectural decisions, and project context for context-aware automation and onboarding.
-
-- **Getting Started: Rules, Workflows, and Memories (Official Docs):**
-  - [Getting Started](https://docs.windsurf.com/windsurf/getting-started)
-  - Introduces the core concepts of Rules, Workflows, and Memories, showing their interaction and importance in automating and enforcing standards throughout the software delivery lifecycle.
-
-- **Rules for AI Assistants (Windsurf & Cursor Interoperability):**
-  - [rules-for-ai GitHub](https://github.com/hashiiiii/rules-for-ai)
-  - Explains how to structure global and project-specific rules in Windsurf (`global_rules.md`, `.windsurfrules`) and Cursor, reinforcing best practices described above.
+- **Cascade Memories (Official Docs):**  
+  [Cascade Memories](https://docs.windsurf.com/windsurf/cascade/memories)  
+  Explains how Windsurf’s Cascade agent uses "Memories" to persist user stories, architectural decisions, and project context for context-aware automation and onboarding.
+- **Getting Started: Rules, Workflows, and Memories (Official Docs):**  
+  [Getting Started](https://docs.windsurf.com/windsurf/getting-started)  
+  Introduces the core concepts of Rules, Workflows, and Memories, showing their interaction and importance in automating and enforcing standards throughout the software delivery lifecycle.
+- **Rules for AI Assistants (Windsurf & Cursor Interoperability):**  
+  [rules-for-ai GitHub](https://github.com/hashiiiii/rules-for-ai)  
+  Explains how to structure global and project-specific rules in Windsurf (`global_rules.md`, `.windsurfrules`) and Cursor, reinforcing best practices described above.
 
 These resources provide further technical details and official guidance, supporting the definitions and practices described in this document. For direct references to mechanisms and definitions, see the "Cascade Memories" and "Getting Started" documentation.[^1]
 
