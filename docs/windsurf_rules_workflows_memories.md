@@ -126,7 +126,7 @@ Windsurf Workflows and GitHub Actions or other CI/CD workflow tools both automat
 
 ## Memories: Institutionalizing Knowledge
 
-This is where Windsurf really shines. Memories are not just notes—they’re structured, persistent records of everything from user stories to architectural decisions.
+This is where Windsurf really shines. Memories are not just notes—they’re structured, persistent records of important project knowledge. Examples include user stories, architectural decisions, process changes, technical standards, troubleshooting steps, and more.
 
 ### Default Location
 
