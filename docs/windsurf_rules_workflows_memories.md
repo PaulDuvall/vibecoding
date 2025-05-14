@@ -26,13 +26,9 @@ In Windsurf, rules are more than just guidelines—they’re living documents th
 
 ### Types of Rules
 
-- **Global Rules** (`global_rules.md`):  
-  These live at `~/.codeium/windsurf/memories/global_rules.md` and define organization-wide standards. Think of them as your “constitution”—they set the tone for every project.
-- **Project Rules** (`.windsurfrules.md`):  
-  Each repository can have its own `.windsurfrules.md` at the project root. These override or extend global rules for local needs. For example, maybe your API project requires stricter security checks than your static site.
-- **Component Rules** ([`.cicdrules.md`](../.cicdrules.md), [`.iamrolerules.md`](../.iamrolerules.md), etc.):  
-  For CI/CD, IAM, or other major components, place dedicated rules files at the project root (e.g., `.cicdrules.md` for CI/CD pipeline standards, `.iamrolerules.md` for IAM and security practices). Reference these files in your workflows and documentation for clarity and enforcement. For additional submodules or microservices, add rules files to the relevant subdirectory as needed.
-
+- **Global Rules** (`global_rules.md`): These live at `~/.codeium/windsurf/memories/global_rules.md` and define organization-wide standards. Think of them as your “constitution”—they set the tone for every project.
+- **Project Rules** (`.windsurfrules.md`): Each repository can have its own `.windsurfrules.md` at the project root. These override or extend global rules for local needs. For example, maybe your API project requires stricter security checks than your static site.
+- **Component Rules** ([`.cicdrules.md`](../.cicdrules.md), [`.iamrolerules.md`](../.iamrolerules.md), etc.): For CI/CD, IAM, or other major components, place dedicated rules files at the project root (e.g., `.cicdrules.md` for CI/CD pipeline standards, `.iamrolerules.md` for IAM and security practices). Reference these files in your workflows and documentation for clarity and enforcement. For additional submodules or microservices, add rules files to the relevant subdirectory as needed.
 - **Workflow YAML:** The repository includes a Windsurf workflow definition at `windsurf_workflows/test_and_lint.yaml`. Note: This workflow exists, but as of now, it has not worked exactly as intended for my local or IDE-based automation needs. Ongoing troubleshooting and improvements are in progress.
 
 ### Best Practices
@@ -144,17 +140,13 @@ This is where Windsurf really shines. Memories are not just notes—they’re st
   I maintain a `user_stories.md` that captures requirements in a testable format. Each story is linked to implementation and test files in a traceability matrix.
 - **Traceability:**  
   The `docs/traceability_matrix.md` links user stories to code and tests, providing an audit trail.
-- **Architectural Decisions:**  
-  Whenever I make a significant design choice, it’s recorded as a memory. This means new team members can see not just what we did, but why.
+- **Architectural Decisions:** Whenever I make a significant design choice, it’s recorded as a memory. This means new team members can see not just what we did, but why.
 
 ### Benefits
 
-- **Onboarding:**  
-  New contributors ramp up in hours, not weeks.
-- **Auditability:**  
-  I can answer “why did we do this?” months after the fact.
-- **AI Assistance:**  
-  Cascade surfaces relevant memories during code reviews, refactoring, and even in chat.
+- **Onboarding:** New contributors ramp up in hours, not weeks.
+- **Auditability:** I can answer “why did we do this?” months after the fact.
+- **AI Assistance:** Cascade surfaces relevant memories during code reviews, refactoring, and even in chat.
 
 ## Cursor: A Comparative Lens
 
@@ -162,12 +154,9 @@ If you’ve used Cursor, you’ll notice some familiar concepts—but with diffe
 
 ### Cursor Analogs
 
-- **Memories:**  
-  Cursor achieves contextual understanding through codebase indexing, chat context, and “Project Rules” that can store persistent information.
-- **Rules:**  
-  Cursor’s “Project Rules” (in `.cursor/rules`) and “User Rules” (global) provide granular control, including file pattern matching and even git commit message checks.
-- **Workflows:**  
-  Cursor’s Agent Mode and Composer can orchestrate multi-step tasks, including multi-file edits and terminal commands.
+- **Memories:** Cursor achieves contextual understanding through codebase indexing, chat context, and “Project Rules” that can store persistent information.
+- **Rules:** Cursor’s “Project Rules” (in `.cursor/rules`) and “User Rules” (global) provide granular control, including file pattern matching and even git commit message checks.
+- **Workflows:** Cursor’s Agent Mode and Composer can orchestrate multi-step tasks, including multi-file edits and terminal commands.
 
 ### Key Takeaway
 
@@ -177,27 +166,17 @@ Both platforms aim to make coding more collaborative and efficient by deeply int
 
 Here’s how these concepts come together in my daily workflow:
 
-1. **Start with the Rules:**  
-   I review (and sometimes update) `global_rules.md` and `.windsurfrules.md` to ensure I’m working with the latest standards.
-2. **Kick Off a Workflow:**  
-   I trigger the `Test & Lint` workflow before pushing changes. If something fails, Cascade surfaces the relevant rule or memory to help me fix it.
-3. **Capture New Knowledge:**  
-   When I solve a tricky problem or make a key decision, I add it as a memory. This might be as simple as updating a user story or as detailed as documenting a new architectural pattern.
-4. **Traceability:**  
-   I link new code and tests to user stories in the traceability matrix, closing the loop between requirements and implementation.
+1. **Start with the Rules:** I review (and sometimes update) `global_rules.md` and `.windsurfrules.md` to ensure I’m working with the latest standards.
+2. **Kick Off a Workflow:** I trigger the `Test & Lint` workflow before pushing changes. If something fails, Cascade surfaces the relevant rule or memory to help me fix it.
+3. **Capture New Knowledge:** When I solve a tricky problem or make a key decision, I add it as a memory. This might be as simple as updating a user story or as detailed as documenting a new architectural pattern.
+4. **Traceability:** I link new code and tests to user stories in the traceability matrix, closing the loop between requirements and implementation.
 
 ## Best Practices for Scaling AI-Driven Delivery
 
-- **Be explicit.**  
-  Don’t assume tribal knowledge—write it down as a rule or memory.
-- **Automate everything.**  
-  If you do it more than once, make it a workflow.
-- **Review and refactor.**  
-  Rules, workflows, and memories are living artifacts—keep them up to date.
-- **Cross-pollinate ideas.**  
-  Borrow best practices from Cursor or other tools and adapt them to your environment.
-
-## Conclusion
+- **Be explicit.** Don’t assume tribal knowledge—write it down as a rule or memory.
+- **Automate everything.** If you do it more than once, make it a workflow.
+- **Review and refactor.** Rules, workflows, and memories are living artifacts—keep them up to date.
+- **Cross-pollinate ideas.** Borrow best practices from Cursor or other tools and adapt them to your environment.
 
 The future of software delivery is AI-driven, but it’s still up to us to provide the right guardrails and context. By codifying rules, automating workflows, and capturing memories, we can build systems that are not just faster and safer, but also more resilient to change.
 
