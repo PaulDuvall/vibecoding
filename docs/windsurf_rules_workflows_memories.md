@@ -136,8 +136,7 @@ This is where Windsurf really shines. Memories are not just notes—they’re st
 
 ### Default Location
 
-- **Memories are stored at:**  
-  `~/.codeium/windsurf/memories/`
+- **Memories are stored at:** `~/.codeium/windsurf/memories/`
 
 ### How We Use Memories
 
