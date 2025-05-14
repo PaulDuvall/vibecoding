@@ -1,0 +1,95 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Pyre type checker
+.pyre/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# Mac OS
+.DS_Store
+
+# Logs
+*.log
+
+# AWS / cloud credentials and config (never commit secrets!)
+.aws/
+*.pem
+*.key
+*.crt
+*.env
+.env.*
+secrets.*
+
+# Project-specific
+# Exclude local config, secrets, build artifacts, and automation logs
+local_config.*
+*.bak
+*.swp
+*.swo
+*.tmp
+*.orig
+
+# Documentation build
+_site/
+
+# Node/npm (if present)
+node_modules/
+
+# Ignore markdown logs and audit files
+.cascade_interactions.md
+
+# Ignore gitkeep files (keep empty dirs tracked)
+!*/.gitkeep
