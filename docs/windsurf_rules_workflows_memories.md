@@ -136,10 +136,8 @@ This is where Windsurf really shines. Memories are not just notes—they’re st
 
 ### How I Use Memories
 
-- **User Stories:**  
-  I maintain a `user_stories.md` that captures requirements in a testable format. Each story is linked to implementation and test files in a traceability matrix.
-- **Traceability:**  
-  The `docs/traceability_matrix.md` links user stories to code and tests, providing an audit trail.
+- **User Stories:** I maintain a `user_stories.md` that captures requirements in a testable format. Each story is linked to implementation and test files in a traceability matrix.
+- **Traceability:** The `docs/traceability_matrix.md` links user stories to code and tests, providing an audit trail.
 - **Architectural Decisions:** Whenever I make a significant design choice, it’s recorded as a memory. This means new team members can see not just what we did, but why.
 
 ### Benefits
