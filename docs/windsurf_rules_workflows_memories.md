@@ -24,8 +24,8 @@ In Windsurf, rules are more than just guidelines—they’re living documents th
   These live at `~/.codeium/windsurf/memories/global_rules.md` and define organization-wide standards. Think of them as your “constitution”—they set the tone for every project.
 - **Project Rules** (`.windsurfrules.md`):  
   Each repository can have its own `.windsurfrules.md` at the project root. These override or extend global rules for local needs. For example, maybe your API project requires stricter security checks than your static site.
-- **Component Rules** (`./lambda_rules.md`, etc.):  
-  For microservices or submodules, place rules files in the relevant subdirectory. This allows you to tailor standards for specific components without cluttering the global or project-level rules.
+- **Component Rules** ([`.cicdrules.md`](../.cicdrules.md), [`.iamrolerules.md`](../.iamrolerules.md), etc.):  
+  For CI/CD, IAM, or other major components, place dedicated rules files at the project root (e.g., `.cicdrules.md` for CI/CD pipeline standards, `.iamrolerules.md` for IAM and security practices). Reference these files in your workflows and documentation for clarity and enforcement. For additional submodules or microservices, add rules files to the relevant subdirectory as needed.
 
 ### Best Practices
 
