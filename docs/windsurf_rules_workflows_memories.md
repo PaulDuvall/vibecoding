@@ -4,7 +4,7 @@ Over the past two decades, I’ve been obsessed with making software delivery fa
 
 In this post, I’ll walk through how to use Rules, Workflows, and Memories in Windsurf to create a living, breathing software system. I’ll also compare these concepts to Cursor’s approach, so you can translate practices between environments and scale your own delivery pipelines—no matter which AI-powered IDE you choose.
 
-## On Vibe Coding, Code Review, and Engineering Rigor
+## On Vibe Coding, Code Reviews, and Engineering Rigor
 
 There is ongoing debate in the software community about whether "vibe coding"—the practice of coding rapidly with AI assistance—should include code review and the application of rigorous software engineering practices. Some argue that vibe coding is inherently informal and may bypass critical quality gates because, as described by [Andrej Karpathy](https://en.wikipedia.org/wiki/Andrej_Karpathy), it is meant for throwaway projects, while others see it as an opportunity to accelerate delivery without sacrificing standards.
 
