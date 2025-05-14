@@ -27,6 +27,8 @@ In Windsurf, rules are more than just guidelines—they’re living documents th
 - **Component Rules** ([`.cicdrules.md`](../.cicdrules.md), [`.iamrolerules.md`](../.iamrolerules.md), etc.):  
   For CI/CD, IAM, or other major components, place dedicated rules files at the project root (e.g., `.cicdrules.md` for CI/CD pipeline standards, `.iamrolerules.md` for IAM and security practices). Reference these files in your workflows and documentation for clarity and enforcement. For additional submodules or microservices, add rules files to the relevant subdirectory as needed.
 
+- **Workflow YAML:** The repository includes a Windsurf workflow definition at `windsurf_workflows/test_and_lint.yaml`. Note: This workflow exists, but as of now, it has not worked exactly as intended for my local or IDE-based automation needs. Ongoing troubleshooting and improvements are in progress.
+
 ### Best Practices
 
 - **Document the hierarchy** in your `README.md`, so contributors know which rules apply.
