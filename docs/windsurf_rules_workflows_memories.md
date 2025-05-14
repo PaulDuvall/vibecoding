@@ -4,6 +4,12 @@ Over the past two decades, I’ve been obsessed with making software delivery fa
 
 In this post, I’ll walk through how to use Rules, Workflows, and Memories in Windsurf to create a living, breathing software system. I’ll also compare these concepts to Cursor’s approach, so you can translate practices between environments and scale your own delivery pipelines—no matter which AI-powered IDE you choose.
 
+## On Vibe Coding, Code Review, and Engineering Rigor
+
+There is ongoing debate in the software community about whether "vibe coding"—the practice of coding rapidly with AI assistance—should include code review and the application of rigorous software engineering practices. Some argue that vibe coding is inherently informal and may bypass critical quality gates, while others see it as an opportunity to accelerate delivery without sacrificing standards.
+
+My perspective is that tools like Windsurf can absolutely help generate production-ready code, provided that you (the human) remain in the loop: reviewing generated code, injecting software engineering best practices, and holding the output to the same standards as any hand-written code. This workflow—AI-assisted generation with human oversight and rigor—is not only possible, but essential for responsible, high-quality software delivery. Windsurf, in this context, acts as an amplifier for best practices, not a replacement for them.
+
 ## Why Rules, Workflows, and Memories Matter
 
 Let’s face it: most teams struggle with consistency, onboarding, and the loss of tribal knowledge. How many times have you joined a project and spent days (or weeks) figuring out which standards to follow, where the deployment scripts live, or why a certain architectural decision was made? Multiply that by the number of teams, and you get a productivity drain that no amount of heroics can fix.
