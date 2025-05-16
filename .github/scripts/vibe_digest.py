@@ -61,7 +61,7 @@ def summarize(text):
         str: Generated summary
     """
     openai.api_key = os.getenv("OPENAI_API_KEY")
-    response = openai.ChatCompletion.create(
+    response = openai.chat.completions.create(
         model="gpt-4",
         messages=[
             {
@@ -72,7 +72,7 @@ def summarize(text):
         ],
         max_tokens=200
     )
-    return response["choices"][0]["message"]["content"].strip()
+    return response.choices[0].message.content.strip()
 
 
 def format_digest(summaries):
