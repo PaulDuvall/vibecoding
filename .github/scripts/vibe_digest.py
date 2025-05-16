@@ -4,7 +4,7 @@ import feedparser
 import openai
 import requests
 from datetime import datetime
-import pytz  # or from zoneinfo import ZoneInfo for Python 3.9+
+from zoneinfo import ZoneInfo
 
 from aws_blog_search import fetch_aws_blog_posts
 
@@ -155,16 +155,8 @@ def format_digest(summaries):
     Returns:
         str: Formatted HTML digest
     """
-    try:
-        # Use zoneinfo if available (Python 3.9+)
-        from zoneinfo import ZoneInfo
-        eastern = ZoneInfo('America/New_York')
-        now_et = datetime.now(tz=eastern)
-    except ImportError:
-        # Fallback to pytz
-        import pytz
-        eastern = pytz.timezone('US/Eastern')
-        now_et = datetime.now(tz=pytz.utc).astimezone(eastern)
+    eastern = ZoneInfo('America/New_York')
+    now_et = datetime.now(tz=eastern)
     now_str = now_et.strftime('%Y-%m-%d %H:%M %Z')
     digest = f"<h2>🧠 Vibe Coding Digest – {now_str}</h2><ul>"
     for summary in summaries:
