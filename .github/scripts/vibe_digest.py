@@ -218,7 +218,8 @@ def send_email(html):
         response = requests.post(
             "https://api.sendgrid.com/v3/mail/send",
             json=payload,
-            headers=headers
+            headers=headers,
+            timeout=10  # Added timeout to comply with Bandit B113
         )
         response.raise_for_status()
         logging.info("Digest email sent successfully.")
