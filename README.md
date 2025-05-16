@@ -78,6 +78,41 @@ Set the following secrets in your GitHub repository for the workflow to function
 
 ---
 
+## How to Create an RSS Feed for a Google Alert
+
+You can use Google Alerts to track news, blogs, and forum posts for any search term, and receive updates via RSS. Here’s how to set up an RSS feed for a Google Alert:
+
+1. **Go to Google Alerts:**
+   - Visit [https://www.google.com/alerts](https://www.google.com/alerts) and sign in with your Google account.
+
+2. **Create a New Alert:**
+   - In the search box, enter your desired query (e.g., `AI coding`, `GitHub Copilot`, `Vibe Coding`).
+   - Click “Show options” to adjust frequency, sources, language, and region as needed.
+   - For “Deliver to,” select **RSS feed** from the dropdown menu.
+   - Click **Create Alert**.
+
+3. **Copy the RSS Feed URL:**
+   - After creating the alert, you’ll see it listed with an RSS icon next to it.
+   - Right-click the RSS icon and copy the link address (it will look like `https://www.google.com/alerts/feeds/XXXXXXXX/XXXXXXXX`).
+
+4. **Add the Feed to Your Digest:**
+   - Add the RSS URL to your `FEEDS` list in `vibe_digest.py`.
+   - Add a human-friendly name to `FEED_SOURCES` in the same file for clarity.
+
+**Example:**
+```python
+FEEDS = [
+    # ...other feeds...
+    "https://www.google.com/alerts/feeds/11805205268710618137/2009129731931801714",  # Google Alerts: Vibe Coding
+]
+FEED_SOURCES = {
+    # ...other sources...
+    "https://www.google.com/alerts/feeds/11805205268710618137/2009129731931801714": "Google Alerts: Vibe Coding",
+}
+```
+
+---
+
 ## Windsurf Vibe Coding vs. Cursor: Conceptual Analogs
 
 Both **Windsurf Vibe Coding** (Cascade) and **Cursor** are advanced AI-powered coding environments, but they use different terminology for similar concepts. Here’s how their core features map to each other:
