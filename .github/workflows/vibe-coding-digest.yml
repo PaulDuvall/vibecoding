@@ -1,8 +1,17 @@
 # .github/workflows/vibe-coding-digest.yml
 name: Daily Vibe Coding Digest
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
   schedule:
     # Runs once a day at 9AM US Eastern Time (13:00 UTC), note: UTC time does not account for daylight saving time
     - cron: "0 13 * * *"
