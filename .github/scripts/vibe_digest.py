@@ -245,8 +245,8 @@ def main():
         summaries.append(
             summarize(text, source_name, source_url)
         )
-    html = format_digest(summaries)
-    send_email(html)
+    digest_html, digest_md = format_digest(summaries)
+    send_email(digest_html)
 
 
 if __name__ == "__main__":
