@@ -4,6 +4,80 @@ This project uses **Windsurf** to manage and automate development standards, wor
 
 ---
 
+## Vibe Digest Automation & Quality Workflow
+
+### Overview
+
+**Vibe Digest** is an automated content aggregation and summarization tool that delivers curated, daily email digests of the most relevant developments in AI, developer tools, and emerging technology. See [`docs/prd.md`](docs/prd.md) for the Product Requirements Document (PRD), goals, and acceptance criteria.
+
+### Key Features
+- Aggregates RSS feeds from multiple sources
+- Summarizes content using OpenAI's API
+- Formats and sends a daily HTML digest via SendGrid
+- Designed for tech founders, engineers, and AI practitioners
+
+### Quality & CI/CD Workflow
+- **Linting:** Enforced via Flake8 (`./run.sh lint`)
+- **Testing:** Comprehensive pytest suite (`./run.sh test`)
+- **CI/CD:** Automated with GitHub Actions ([`.github/workflows/vibe-coding-digest.yml`](.github/workflows/vibe-coding-digest.yml))
+- **All code and tests are PEP 8 compliant** as of the latest update
+- **Traceability:**
+  - Implementation: [`.github/scripts/vibe_digest.py`](.github/scripts/vibe_digest.py)
+  - Tests: [`tests/test_vibe_digest.py`](tests/test_vibe_digest.py)
+  - Product requirements: [`docs/prd.md`](docs/prd.md)
+
+### Required Secrets for Deployment
+Set the following secrets in your GitHub repository for the workflow to function:
+- `OPENAI_API_KEY`: OpenAI API access
+- `SENDGRID_API_KEY`: SendGrid email service
+- `EMAIL_FROM`: Verified sender email address
+- `EMAIL_TO`: Recipient email address
+
+---
+
+### Setting Up SendGrid for Email Delivery
+
+1. **Create a SendGrid Account**  
+   Sign up at [https://sendgrid.com/](https://sendgrid.com/).
+
+2. **Verify a Sender or Domain**  
+   - Go to **Settings > Sender Authentication** in the SendGrid dashboard.
+   - For testing, use **Single Sender Verification** (enter and verify your email).
+   - For production, use **Domain Authentication** (add DNS records and verify your domain).
+
+3. **Generate an API Key**  
+   - Go to **Settings > API Keys**.
+   - Click **Create API Key** (give it a name, e.g., `VibeDigest`).
+   - Select "Full Access" or at least "Mail Send" permissions.
+   - Click **Create & View** and **copy the API key** (you won't see it again).
+
+4. **Set GitHub Secrets**  
+   Use the [`scripts/set_github_secrets.sh`](scripts/set_github_secrets.sh) script or set secrets manually in your GitHub repository:
+   ```bash
+   ./scripts/set_github_secrets.sh <owner/repo>
+   ```
+   - `SENDGRID_API_KEY`: Your SendGrid API key
+   - `EMAIL_FROM`: Your verified sender email
+   - `EMAIL_TO`: Recipient email address
+
+5. **Test Your Setup**  
+   Trigger the workflow or run the script locally. Check your inbox for the digest.
+
+**Tip:** For best deliverability, use domain authentication and a sender address at your own domain.
+
+---
+
+### Running Locally
+```bash
+# Run linting
+./run.sh lint
+
+# Run tests
+./run.sh test
+```
+
+---
+
 ## Windsurf Vibe Coding vs. Cursor: Conceptual Analogs
 
 Both **Windsurf Vibe Coding** (Cascade) and **Cursor** are advanced AI-powered coding environments, but they use different terminology for similar concepts. Here’s how their core features map to each other:

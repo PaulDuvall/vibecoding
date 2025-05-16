@@ -1,0 +1,178 @@
+# test_vibe_digest.py
+
+"""Tests for the vibe_digest module."""
+import os
+import sys
+from datetime import datetime
+from unittest.mock import patch, MagicMock
+
+import pytest
+
+# Add the .github/scripts directory to the path so we can import vibe_digest
+sys.path.append(os.path.join(
+    os.path.dirname(__file__), '..', '.github', 'scripts'
+))
+
+# Import the module to test
+import vibe_digest  # noqa: E402
+
+
+def test_fetch_feed_items():
+    """Test that fetch_feed_items returns a list of feed items.
+
+    This test verifies that the function correctly processes RSS feed URLs
+    and returns the expected number of items with the correct structure.
+    """
+    with patch('feedparser.parse') as mock_parse:
+        # Mock the feedparser response
+        mock_feed = MagicMock()
+        mock_feed.entries = [
+            MagicMock(
+                title="Test Title 1",
+                link="http://example.com/1",
+                summary="Test Summary 1"
+            ),
+            MagicMock(
+                title="Test Title 2",
+                link="http://example.com/2",
+                summary="Test Summary 2"
+            )
+        ]
+        mock_parse.return_value = mock_feed
+
+        # Patch FEEDS to a single URL for isolation
+        original_feeds = vibe_digest.FEEDS
+        vibe_digest.FEEDS = ["http://dummy.url"]
+        try:
+            # Call the function
+            items = vibe_digest.fetch_feed_items()
+
+            # Assert the results
+            assert len(items) == 2
+            assert items[0].title == "Test Title 1"
+            assert items[1].title == "Test Title 2"
+            # Assert the mock_parse call count (should be 1)
+            assert mock_parse.call_count == 1
+        finally:
+            vibe_digest.FEEDS = original_feeds
+
+
+def test_summarize():
+    """Test the summarize function with a mock OpenAI response.
+
+    This test verifies that the summarize function correctly processes input
+    text and returns the expected summary from the mock OpenAI API.
+    """
+    with patch('openai.ChatCompletion.create') as mock_create:
+        # Mock the OpenAI response
+        mock_response = {
+            "choices": [{
+                "message": {
+                    "content": "This is a test summary.",
+                    "role": "assistant"
+                }
+            }]
+        }
+        mock_create.return_value = mock_response
+
+        # Call the function
+        with patch.dict('os.environ', {'OPENAI_API_KEY': 'test-key'}):
+            result = vibe_digest.summarize("Test input text")
+
+        # Assert the results
+        assert result == "This is a test summary."
+        mock_create.assert_called_once()
+
+
+def test_format_digest():
+    """Test that the digest is formatted correctly.
+
+    This test verifies that the format_digest function generates the expected
+    HTML structure with the current date and provided summaries.
+    """
+    # Mock datetime to ensure consistent test output
+    with patch('vibe_digest.datetime') as mock_datetime:
+        test_date = datetime(2023, 1, 1)
+        mock_datetime.utcnow.return_value = test_date
+
+        # Call the function with test data
+        test_summaries = ["Summary 1", "Summary 2"]
+        result = vibe_digest.format_digest(test_summaries)
+
+        # Assert the results
+        expected_date = test_date.strftime("%B %d, %Y")
+        assert f"<h2>🧠 Vibe Coding Digest – {expected_date}</h2>" in result
+        assert "<li>Summary 1</li>" in result
+        assert "<li>Summary 2</li>" in result
+
+
+def test_send_email():
+    """Test the send_email function with a mock requests.post.
+
+    This test verifies that the send_email function constructs the correct
+    API request to SendGrid with the expected headers and payload.
+    """
+    with patch('requests.post') as mock_post, \
+         patch.dict('os.environ', {
+             'SENDGRID_API_KEY': 'test-api-key',
+             'EMAIL_TO': 'to@example.com',
+             'EMAIL_FROM': 'from@example.com'
+         }):
+        # Mock the response
+        mock_response = MagicMock()
+        mock_response.raise_for_status.return_value = None
+        mock_post.return_value = mock_response
+
+        # Call the function
+        test_html = "<h1>Test Email</h1>"
+        vibe_digest.send_email(test_html)
+
+        # Assert the request was made correctly
+        expected_url = "https://api.sendgrid.com/v3/mail/send"
+        mock_post.assert_called_once()
+        args, kwargs = mock_post.call_args
+        assert args[0] == expected_url
+        assert kwargs['headers']['Authorization'] == "Bearer test-api-key"
+        assert kwargs['json']['content'][0]['value'] == test_html
+
+
+def test_main(monkeypatch):
+    """Test the main function integration.
+
+    This test verifies that the main function correctly orchestrates the
+    entire process of fetching, summarizing, and emailing the digest.
+    """
+    # Mock all external dependencies
+    test_items = [
+        MagicMock(
+            title="Test Title",
+            link="http://example.com",
+            summary="Test Summary"
+        ),
+        MagicMock(
+            title="Test Title 2",
+            link="http://example.com/2",
+            summary="Test Summary 2"
+        )
+    ]
+
+    with (
+        patch('vibe_digest.fetch_feed_items', return_value=test_items) as mock_fetch,
+        patch('vibe_digest.summarize', return_value="Test Summary") as mock_summarize,
+        patch('vibe_digest.format_digest',
+              return_value="<html>Test Digest</html>") as mock_format,
+        patch('vibe_digest.send_email') as mock_send
+    ):
+
+        # Call the main function
+        vibe_digest.main()
+
+        # Assert the function calls
+        mock_fetch.assert_called_once()
+        assert mock_summarize.call_count == len(test_items)
+        mock_format.assert_called_once_with(["Test Summary"] * len(test_items))
+        mock_send.assert_called_once_with("<html>Test Digest</html>")
+
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])
