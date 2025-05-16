@@ -26,9 +26,11 @@ This project uses **Windsurf** to manage and automate development standards, wor
 - **Linting:** Enforced via Flake8 (`./run.sh lint`)
 - **Testing:** Comprehensive pytest suite (`./run.sh test`)
 - **CI/CD:** Automated with GitHub Actions ([`.github/workflows/vibe-coding-digest.yml`](.github/workflows/vibe-coding-digest.yml))
+- **Secrets Scanning:** Enforced via Gitleaks in GitHub Actions (see `.github/workflows/vibe-coding-digest.yml`, per `.cicdrules.md`)
 - **All code and tests are PEP 8 compliant** as of the latest update
 - **Traceability:**
   - Implementation: [`.github/scripts/vibe_digest.py`](.github/scripts/vibe_digest.py)
+  - CI/CD Security: [`.github/workflows/vibe-coding-digest.yml`](.github/workflows/vibe-coding-digest.yml) (Gitleaks secrets scanning)
   - Tests: [`tests/test_vibe_digest.py`](tests/test_vibe_digest.py)
   - Product requirements: [`docs/prd.md`](docs/prd.md)
 

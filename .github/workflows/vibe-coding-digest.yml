@@ -35,6 +35,11 @@ jobs:
         with:
           python-version: 3.11
 
+      # --- FAKE SECRETS FOR TESTING GITLEAKS ---
+      # AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+      # GITHUB_TOKEN = "ghp_FAKEgitleaksToken1234567890abcdefgHIJKL"
+      # FAKE_API_KEY = "sk-test_51H8zF1FAKEKEYEXAMPLE1234567890abcdef"
+
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
@@ -46,4 +51,7 @@ jobs:
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          AWS_SECRET_ACCESS_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+          GITHUB_TOKEN: ghp_FAKEgitleaksToken1234567890abcdefgHIJKL
+          FAKE_API_KEY: sk-test_51H8zF1FAKEKEYEXAMPLE1234567890abcdef
         run: python .github/scripts/vibe_digest.py
