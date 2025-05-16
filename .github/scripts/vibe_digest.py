@@ -16,19 +16,79 @@ from datetime import datetime
 # - Latent Space:        https://latent.space/feed
 # ---
 FEEDS = [
+    # --- Core AI/Dev Feeds ---
+    "https://www.google.com/alerts/feeds/11805205268710618137/2009129731931801714",  # Google Alerts: Vibe Coding
     "https://www.cursor.sh/blog/rss.xml",           # Cursor Blog
     "https://windsurf.com/blog/rss.xml",            # Windsurf Blog
     "https://latent.space/feed",                    # Latent Space (Substack)
     "https://hnrss.org/newest?q=cursor+IDE",        # Hacker News keyword search
     "https://www.reddit.com/r/vibecoding/.rss",     # Reddit /r/vibecoding
-    # GitHub repo search RSS (may require authentication or manual generation)
     "https://github.com/search?q=vibe+coding&type=repositories&format=rss",  # GitHub search
-    # TODO: Add Claude Code/Anthropic (custom watcher on release notes)
-    # TODO: Add GitHub Trending (API or scraping)
-    # TODO: Add YouTube search (via RSSHub or 3rd-party RSS generator)
-    # TODO: Add Google Alerts (via email-to-RSS or Zapier)
-    # TODO: Add LinkedIn content (via RSSHub, scraping, or API)
+    # --- GitHub Copilot related ---
+    "https://hnrss.org/newest?q=github+copilot",    # Hacker News: GitHub Copilot
+    "https://www.reddit.com/search.rss?q=github+copilot",  # Reddit search: GitHub Copilot
+    "https://github.blog/feed/",                    # GitHub Blog
+    # --- Recommended Additional Feeds ---
+    # Claude Code / Anthropic Release Notes (via RSSHub)
+    "https://rsshub.app/anthropic/claude/release-notes",    # Claude Release Notes (RSSHub)
+    # GitHub Trending (via unofficial API)
+    "https://github-trending-api.now.sh/repositories?language=python&since=daily", # GitHub Trending (Python, daily)
+    # YouTube AI/ML Channels
+    "https://www.youtube.com/feeds/videos.xml?channel_id=UCZHmQk67mSJgfCCTn7xBfew",  # YouTube: Yannic Kilcher
+    "https://www.youtube.com/feeds/videos.xml?channel_id=UCbfYPyITQ-7l4upoX8nvctg",  # YouTube: Two Minute Papers
+    "https://www.youtube.com/feeds/videos.xml?channel_id=UCLB7AzTwc6VFZrBsO2ucBMg",  # YouTube: OpenAI
+    "https://www.youtube.com/feeds/videos.xml?channel_id=UCm5mt-A4w61lknZ9lCsZtBw",  # YouTube: Latent Space Podcast
+    # YouTube search for "AI coding" (via RSSHub)
+    "https://rsshub.app/youtube/search/ai%20coding",  # YouTube search: AI coding
+    # Google Alerts (user must set up and supply their own RSS for privacy)
+    # "https://www.google.com/alerts/feeds/xxxx/xxxx",  # Google Alerts: AI coding (placeholder)
+    # Product Hunt – AI Tools
+    "https://www.producthunt.com/topics/artificial-intelligence.rss",                # Product Hunt AI
+    # Reddit – Broader AI Communities
+    "https://www.reddit.com/r/MachineLearning/.rss",  # Reddit: MachineLearning
+    "https://www.reddit.com/r/artificial/.rss",       # Reddit: Artificial Intelligence
+    "https://www.reddit.com/r/programming/.rss",      # Reddit: Programming
+    # Official Blogs
+    "https://openai.com/blog/rss",                    # OpenAI Blog
+    "https://www.anthropic.com/news/feed.xml",        # Anthropic Blog
+    "https://ai.googleblog.com/feeds/posts/default",  # Google AI Blog
 ]
+
+
+# Mapping from feed URL to human-friendly source name
+FEED_SOURCES = {
+    "https://www.google.com/alerts/feeds/11805205268710618137/2009129731931801714": "Google Alerts: AI coding",
+    # --- Core AI/Dev Feeds ---
+    "https://www.cursor.sh/blog/rss.xml": "Cursor Blog",
+    "https://windsurf.com/blog/rss.xml": "Windsurf Blog",
+    "https://latent.space/feed": "Latent Space (Substack)",
+    "https://hnrss.org/newest?q=cursor+IDE": "Hacker News (Cursor IDE)",
+    "https://www.reddit.com/r/vibecoding/.rss": "Reddit /r/vibecoding",
+    "https://github.com/search?q=vibe+coding&type=repositories&format=rss": "GitHub Search (Vibe Coding)",
+    # --- GitHub Copilot related ---
+    "https://hnrss.org/newest?q=github+copilot": "Hacker News (GitHub Copilot)",
+    "https://www.reddit.com/search.rss?q=github+copilot": "Reddit Search (GitHub Copilot)",
+    "https://github.blog/feed/": "GitHub Blog",
+    # --- Recommended Additional Feeds ---
+    "https://rsshub.app/anthropic/claude/release-notes": "Claude Release Notes (RSSHub)",
+    "https://github-trending-api.now.sh/repositories?language=python&since=daily": "GitHub Trending (Python, daily)",
+    "https://www.youtube.com/feeds/videos.xml?channel_id=UCZHmQk67mSJgfCCTn7xBfew": "YouTube: Yannic Kilcher",
+    "https://www.youtube.com/feeds/videos.xml?channel_id=UCbfYPyITQ-7l4upoX8nvctg": "YouTube: Two Minute Papers",
+    "https://www.youtube.com/feeds/videos.xml?channel_id=UCLB7AzTwc6VFZrBsO2ucBMg": "YouTube: OpenAI",
+    "https://www.youtube.com/feeds/videos.xml?channel_id=UCm5mt-A4w61lknZ9lCsZtBw": "YouTube: Latent Space Podcast",
+    "https://rsshub.app/youtube/search/ai%20coding": "YouTube Search: AI coding (RSSHub)",
+    # Google Alerts placeholder (user-supplied)
+    # "https://www.google.com/alerts/feeds/xxxx/xxxx": "Google Alerts: AI coding",
+    "https://www.producthunt.com/topics/artificial-intelligence.rss": "Product Hunt: AI",
+    "https://www.reddit.com/r/MachineLearning/.rss": "Reddit: MachineLearning",
+    "https://www.reddit.com/r/artificial/.rss": "Reddit: Artificial Intelligence",
+    "https://www.reddit.com/r/programming/.rss": "Reddit: Programming",
+    "https://openai.com/blog/rss": "OpenAI Blog",
+    "https://www.anthropic.com/news/feed.xml": "Anthropic Blog",
+    "https://ai.googleblog.com/feeds/posts/default": "Google AI Blog",
+}
+
+
 
 # ---
 # Delivery Options (choose one or extend):
@@ -51,24 +111,31 @@ def fetch_feed_items():
     return items[:10]
 
 
-def summarize(text):
-    """Generate a summary of the given text using OpenAI's API.
+def summarize(text, source_name, source_url):
+    """Generate a summary of the given text using OpenAI's API, including source info.
 
     Args:
         text (str): Text to summarize
+        source_name (str): Human-friendly source name
+        source_url (str): Source URL
 
     Returns:
         str: Generated summary
     """
     openai.api_key = os.getenv("OPENAI_API_KEY")
+    prompt = (
+        f"Source: {source_name} ({source_url})\n"
+        f"Article:\n{text[:4000]}\n"
+        "\nWrite 2-3 crisp sentences: identify the source (with its URL) and its key message."
+    )
     response = openai.chat.completions.create(
         model="gpt-4",
         messages=[
             {
                 "role": "system",
-                "content": "Summarize articles for a daily Vibe Coding digest."
+                "content": "You are a helpful assistant that summarizes articles for a daily Vibe Coding digest. Always use this format: 'Source: [source name] ([source URL]) Key message: [summary]'."
             },
-            {"role": "user", "content": text[:4000]}
+            {"role": "user", "content": prompt}
         ],
         max_tokens=200
     )
@@ -106,7 +173,7 @@ def send_email(html):
             "to": [{"email": os.getenv("EMAIL_TO")}]
         }],
         "from": {"email": os.getenv("EMAIL_FROM")},
-        "subject": "🧠 Daily Vibe Coding Digest",
+        "subject": f"🧠 Daily Vibe Coding Digest – {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}",
         "content": [{"type": "text/html", "value": html}]
     }
     headers = {
@@ -129,12 +196,32 @@ def main():
     the digest via email.
     """
     items = fetch_feed_items()
-    summaries = [
-        summarize(
-            item.title + "\n" + item.link + "\n" + (item.get("summary", ""))
+    summaries = []
+    for item in items:
+        source_url = item.get('feedburner_origlink', None) or getattr(item, 'href', None) or getattr(item, 'feed', {}).get('href', None)
+        # fallback: use item.feed if available, otherwise try to match by link prefix
+        if not source_url:
+            for feed_url in FEEDS:
+                if item.link.startswith(feed_url.split('/rss')[0]):
+                    source_url = feed_url
+                    break
+        # fallback: use feed_url from FEEDS if present in item's feed
+        if not source_url and hasattr(item, 'feed') and hasattr(item.feed, 'href'):
+            source_url = item.feed.href
+        # fallback: try to match by domain
+        if not source_url:
+            for feed_url in FEEDS:
+                if feed_url.split('/')[2] in item.link:
+                    source_url = feed_url
+                    break
+        # fallback: just use the first FEEDS url
+        if not source_url:
+            source_url = FEEDS[0]
+        source_name = FEED_SOURCES.get(source_url, 'Unknown Source')
+        text = item.title + "\n" + item.link + "\n" + (item.get("summary", ""))
+        summaries.append(
+            summarize(text, source_name, source_url)
         )
-        for item in items
-    ]
     html = format_digest(summaries)
     send_email(html)
 
