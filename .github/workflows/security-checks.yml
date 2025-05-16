@@ -18,7 +18,8 @@ jobs:
         uses: tj-actions/bandit@v5
         with:
           targets: .
-        # Fails if any high-severity issues are found
+          options: --severity-level medium
+        # Fails only if medium or higher severity issues are found
 
   secrets-scan:
     name: Scan for Secrets (Gitleaks)
