@@ -6,7 +6,7 @@ import requests
 from datetime import datetime
 import pytz  # or from zoneinfo import ZoneInfo for Python 3.9+
 
-from .aws_blog_search import fetch_aws_blog_posts
+from aws_blog_search import fetch_aws_blog_posts
 
 
 # ---
