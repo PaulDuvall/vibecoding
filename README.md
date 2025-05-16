@@ -4,7 +4,7 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/PaulDuvall/vibecoding)
 [![LinkedIn-Follow](https://img.shields.io/badge/LinkedIn-Follow-blue)](https://www.linkedin.com/in/paulduvall/)
 
-# Rules, Workflows, and Memories in Windsurf
+# Vibe Coding: Automated Research Digest & Windsurf Standards
 
 This project uses **Windsurf** to manage and automate development standards, workflows, and persistent project knowledge. This approach ensures consistency, scalability, and rapid onboarding for all contributors.
 
