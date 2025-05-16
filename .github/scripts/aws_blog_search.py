@@ -8,9 +8,9 @@ def fetch_aws_blog_posts(queries=None, max_results_per_query=3):
     Returns a list of dicts with 'title', 'link', 'summary', and 'published'.
     """
     if queries is None:
-        queries = ["vibe coding", "security engineering"]
+        queries = ["vibe coding", "security engineering", "vibe coding security"]
     # Always include these related terms
-    queries += ["agentic coding", "amazon q developer", "codewhisperer", "vibe coding security engineering"]
+    queries += ["agentic coding", "amazon q developer", "codewhisperer", "vibe coding security engineering", "vibe coding security"]
     rss_url = "https://aws.amazon.com/blogs/aws/feed/"
     feed = feedparser.parse(rss_url)
     seen_links = set()
