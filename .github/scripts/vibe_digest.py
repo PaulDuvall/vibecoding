@@ -179,7 +179,7 @@ def send_email(html):
             "to": [{"email": os.getenv("EMAIL_TO")}]
         }],
         "from": {"email": os.getenv("EMAIL_FROM")},
-        "subject": f"🧠 Daily Vibe Coding Digest – {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}",
+        "subject": f"🧠 Daily Vibe Coding Digest – {datetime.now(ZoneInfo('America/New_York')).strftime('%B %d, %Y %-I:%M %p %Z')}",
         "content": [{"type": "text/html", "value": html}]
     }
     headers = {
