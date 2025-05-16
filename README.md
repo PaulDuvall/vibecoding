@@ -1,3 +1,10 @@
+[![GitHub Actions Workflow Status](https://github.com/PaulDuvall/vibecoding/blob/main/.github/workflows/vibe-coding-digest.yml/badge.svg)](https://github.com/PaulDuvall/vibecoding/blob/main/.github/workflows/vibe-coding-digest.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+![Python](https://img.shields.io/badge/python-3.11-blue.svg)
+![GitHub last commit](https://img.shields.io/github/last-commit/PaulDuvall/vibecoding)
+![Page Views](https://komarev.com/ghpvc/?username=PaulDuvall&repo=vibecoding&label=Page%20Views)
+[![LinkedIn-Connect](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/paulduvall/)
+
 # Rules, Workflows, and Memories in Windsurf
 
 This project uses **Windsurf** to manage and automate development standards, workflows, and persistent project knowledge. This approach ensures consistency, scalability, and rapid onboarding for all contributors.
