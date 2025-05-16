@@ -4,6 +4,7 @@ import feedparser
 import openai
 import requests
 from datetime import datetime
+from .aws_blog_search import fetch_aws_blog_posts
 
 
 # ---
@@ -57,7 +58,7 @@ FEEDS = [
 
 # Mapping from feed URL to human-friendly source name
 FEED_SOURCES = {
-    "https://www.google.com/alerts/feeds/11805205268710618137/2009129731931801714": "Google Alerts: AI coding",
+    "https://www.google.com/alerts/feeds/11805205268710618137/2009129731931801714": "Google Alerts: Vibe Coding",
     # --- Core AI/Dev Feeds ---
     "https://www.cursor.sh/blog/rss.xml": "Cursor Blog",
     "https://windsurf.com/blog/rss.xml": "Windsurf Blog",
@@ -81,6 +82,7 @@ FEED_SOURCES = {
     # "https://www.google.com/alerts/feeds/xxxx/xxxx": "Google Alerts: AI coding",
     "https://www.producthunt.com/topics/artificial-intelligence.rss": "Product Hunt: AI",
     "https://www.reddit.com/r/MachineLearning/.rss": "Reddit: MachineLearning",
+    "https://www.reddit.com/r/vibecoding/.rss": "Reddit: Vibe Coding",
     "https://www.reddit.com/r/artificial/.rss": "Reddit: Artificial Intelligence",
     "https://www.reddit.com/r/programming/.rss": "Reddit: Programming",
     "https://openai.com/blog/rss": "OpenAI Blog",
@@ -196,29 +198,45 @@ def main():
     the digest via email.
     """
     items = fetch_feed_items()
+    # --- Inject AWS Blog search results as synthetic feed items ---
+    aws_blog_posts = fetch_aws_blog_posts()
+    for post in aws_blog_posts:
+        items.append({
+            'title': post['title'],
+            'link': post['link'],
+            'summary': post['summary'],
+            'feed': {'href': 'https://aws.amazon.com/blogs/aws/feed/'},
+            '_synthetic_source_name': 'AWS Blog',
+            '_synthetic_source_url': 'https://aws.amazon.com/blogs/aws/',
+        })
     summaries = []
     for item in items:
-        source_url = item.get('feedburner_origlink', None) or getattr(item, 'href', None) or getattr(item, 'feed', {}).get('href', None)
-        # fallback: use item.feed if available, otherwise try to match by link prefix
-        if not source_url:
-            for feed_url in FEEDS:
-                if item.link.startswith(feed_url.split('/rss')[0]):
-                    source_url = feed_url
-                    break
-        # fallback: use feed_url from FEEDS if present in item's feed
-        if not source_url and hasattr(item, 'feed') and hasattr(item.feed, 'href'):
-            source_url = item.feed.href
-        # fallback: try to match by domain
-        if not source_url:
-            for feed_url in FEEDS:
-                if feed_url.split('/')[2] in item.link:
-                    source_url = feed_url
-                    break
-        # fallback: just use the first FEEDS url
-        if not source_url:
-            source_url = FEEDS[0]
-        source_name = FEED_SOURCES.get(source_url, 'Unknown Source')
-        text = item.title + "\n" + item.link + "\n" + (item.get("summary", ""))
+        # Use synthetic source if present
+        if '_synthetic_source_name' in item:
+            source_name = item['_synthetic_source_name']
+            source_url = item['_synthetic_source_url']
+        else:
+            source_url = item.get('feedburner_origlink', None) or getattr(item, 'href', None) or getattr(item, 'feed', {}).get('href', None)
+            # fallback: use item.feed if available, otherwise try to match by link prefix
+            if not source_url:
+                for feed_url in FEEDS:
+                    if item.link.startswith(feed_url.split('/rss')[0]):
+                        source_url = feed_url
+                        break
+            # fallback: use feed_url from FEEDS if present in item's feed
+            if not source_url and hasattr(item, 'feed') and hasattr(item.feed, 'href'):
+                source_url = item.feed.href
+            # fallback: try to match by domain
+            if not source_url:
+                for feed_url in FEEDS:
+                    if feed_url.split('/')[2] in item.link:
+                        source_url = feed_url
+                        break
+            # fallback: just use the first FEEDS url
+            if not source_url:
+                source_url = FEEDS[0]
+            source_name = FEED_SOURCES.get(source_url, 'Unknown Source')
+        text = item['title'] + "\n" + item['link'] + "\n" + (item.get("summary", ""))
         summaries.append(
             summarize(text, source_name, source_url)
         )

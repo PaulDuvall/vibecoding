@@ -3,7 +3,8 @@ name: Daily Vibe Coding Digest
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Runs at the top of every hour
+    # Runs once a day at 9AM US Eastern Time (13:00 UTC), note: UTC time does not account for daylight saving time
+    - cron: "0 13 * * *"
   workflow_dispatch:
 
 jobs:
