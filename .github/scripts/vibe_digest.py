@@ -30,7 +30,7 @@ FEEDS = [
     "https://github.blog/feed/",                    # GitHub Blog
     # --- Recommended Additional Feeds ---
     # Claude Code / Anthropic Release Notes (via RSSHub)
-    "https://rsshub.app/anthropic/claude/release-notes",    # Claude Release Notes (RSSHub)
+    # "https://rsshub.app/anthropic/claude/release-notes",    # Claude Release Notes (RSSHub) - currently not working
     # GitHub Trending (via unofficial API)
     "https://github-trending-api.now.sh/repositories?language=python&since=daily", # GitHub Trending (Python, daily)
     # YouTube AI/ML Channels
@@ -39,7 +39,7 @@ FEEDS = [
     "https://www.youtube.com/feeds/videos.xml?channel_id=UCLB7AzTwc6VFZrBsO2ucBMg",  # YouTube: OpenAI
     "https://www.youtube.com/feeds/videos.xml?channel_id=UCm5mt-A4w61lknZ9lCsZtBw",  # YouTube: Latent Space Podcast
     # YouTube search for "AI coding" (via RSSHub)
-    "https://rsshub.app/youtube/search/ai%20coding",  # YouTube search: AI coding
+    # "https://rsshub.app/youtube/search/ai%20coding",  # YouTube search: AI coding (RSSHub) - currently not working
     # Google Alerts (user must set up and supply their own RSS for privacy)
     # "https://www.google.com/alerts/feeds/xxxx/xxxx",  # Google Alerts: AI coding (placeholder)
     # Product Hunt – AI Tools
@@ -70,13 +70,13 @@ FEED_SOURCES = {
     "https://www.reddit.com/search.rss?q=github+copilot": "Reddit Search (GitHub Copilot)",
     "https://github.blog/feed/": "GitHub Blog",
     # --- Recommended Additional Feeds ---
-    "https://rsshub.app/anthropic/claude/release-notes": "Claude Release Notes (RSSHub)",
+    # "https://rsshub.app/anthropic/claude/release-notes": "Claude Release Notes (RSSHub)",
     "https://github-trending-api.now.sh/repositories?language=python&since=daily": "GitHub Trending (Python, daily)",
     "https://www.youtube.com/feeds/videos.xml?channel_id=UCZHmQk67mSJgfCCTn7xBfew": "YouTube: Yannic Kilcher",
     "https://www.youtube.com/feeds/videos.xml?channel_id=UCbfYPyITQ-7l4upoX8nvctg": "YouTube: Two Minute Papers",
     "https://www.youtube.com/feeds/videos.xml?channel_id=UCLB7AzTwc6VFZrBsO2ucBMg": "YouTube: OpenAI",
     "https://www.youtube.com/feeds/videos.xml?channel_id=UCm5mt-A4w61lknZ9lCsZtBw": "YouTube: Latent Space Podcast",
-    "https://rsshub.app/youtube/search/ai%20coding": "YouTube Search: AI coding (RSSHub)",
+    # "https://rsshub.app/youtube/search/ai%20coding": "YouTube Search: AI coding (RSSHub)",
     # Google Alerts placeholder (user-supplied)
     # "https://www.google.com/alerts/feeds/xxxx/xxxx": "Google Alerts: AI coding",
     "https://www.producthunt.com/topics/artificial-intelligence.rss": "Product Hunt: AI",
@@ -126,18 +126,18 @@ def summarize(text, source_name, source_url):
     prompt = (
         f"Source: {source_name} ({source_url})\n"
         f"Article:\n{text[:4000]}\n"
-        "\nWrite 2-3 crisp sentences: identify the source (with its URL) and its key message."
+        "\nWrite 3-4 crisp sentences that identify the source (with its URL) and summarize the article. Do not preface with 'Key Message' or similar—just provide the summary."
     )
     response = openai.chat.completions.create(
         model="gpt-4",
         messages=[
             {
                 "role": "system",
-                "content": "You are a helpful assistant that summarizes articles for a daily Vibe Coding digest. Always use this format: 'Source: [source name] ([source URL]) Key message: [summary]'."
+                "content": "You are a helpful assistant that summarizes articles for a daily Vibe Coding digest. Always start with 'Source: [source name] ([source URL])' and then provide a 3-4 sentence summary with no preface."
             },
             {"role": "user", "content": prompt}
         ],
-        max_tokens=200
+        max_tokens=300
     )
     return response.choices[0].message.content.strip()
 
