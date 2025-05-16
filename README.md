@@ -2,7 +2,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/python-3.11-blue.svg)
 ![GitHub last commit](https://img.shields.io/github/last-commit/PaulDuvall/vibecoding)
-[![LinkedIn-Connect](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/paulduvall/)
+[![LinkedIn-Follow](https://img.shields.io/badge/LinkedIn-Follow-blue)](https://www.linkedin.com/in/paulduvall/)
 
 # Rules, Workflows, and Memories in Windsurf
 
