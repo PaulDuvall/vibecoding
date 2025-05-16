@@ -116,28 +116,25 @@ def fetch_feed_items():
 
 
 def summarize(text, source_name, source_url):
-    """Generate a summary of the given text using OpenAI's API, including source info.
-
-    Args:
-        text (str): Text to summarize
-        source_name (str): Human-friendly source name
-        source_url (str): Source URL
-
-    Returns:
-        str: Generated summary
-    """
     openai.api_key = os.getenv("OPENAI_API_KEY")
     prompt = (
         f"Source: {source_name} ({source_url})\n"
         f"Article:\n{text[:4000]}\n"
-        "\nWrite 3-4 crisp sentences that identify the source (with its URL) and summarize the article. Do not preface with 'Key Message' or similar—just provide the summary."
+        "\nSummarize in the tone and clarity of a high-signal AI newsletter like 'The Vibe'.\n"
+        "Write in the voice of Paul Duvall. Prioritize clarity, precision, and relevance to experienced software engineers.\n"
+        "Focus on the big idea, highlight any tool or trend, tag it appropriately (e.g., \U0001f4c8 trend, \U0001f9ea tool, \U0001f512 security), and end with a useful takeaway.\n"
+        "Use 3–4 short, data-rich sentences. Avoid fluff."
     )
     response = openai.chat.completions.create(
         model="gpt-4",
         messages=[
             {
                 "role": "system",
-                "content": "You are a helpful assistant that summarizes articles for a daily Vibe Coding digest. Always start with 'Source: [source name] ([source URL])' and then provide a 3-4 sentence summary with no preface."
+                "content": (
+                    "You are an editorial assistant summarizing AI-assisted software development articles in the style of Paul Duvall."
+                    " Start with 'Source: [source name] ([source URL])', then summarize concisely."
+                    " Mimic Paul Duvall's clarity, structure, and engineering precision. Tag summaries with appropriate emojis."
+                )
             },
             {"role": "user", "content": prompt}
         ],
@@ -147,22 +144,26 @@ def summarize(text, source_name, source_url):
 
 
 def format_digest(summaries):
-    """Format the digest into HTML.
+    """Format the digest into HTML and Markdown.
 
     Args:
         summaries (list): List of summaries to include in the digest
 
     Returns:
-        str: Formatted HTML digest
+        tuple: Formatted HTML and Markdown digest
     """
     eastern = ZoneInfo('America/New_York')
     now_et = datetime.now(tz=eastern)
     now_str = now_et.strftime('%B %d, %Y %-I:%M %p %Z')
-    digest = f"<h2>🧠 Vibe Coding Digest – {now_str}</h2><ul>"
+    digest_html = f"<h2>🧠 Vibe Coding Digest – {now_str}</h2><ul>"
+    digest_md = f"## 🧠 Vibe Coding Digest – {now_str}\n"
+
     for summary in summaries:
-        digest += f"<li>{summary}</li>"
-    digest += "</ul>"
-    return digest
+        digest_html += f"<li>{summary}</li>"
+        digest_md += f"- {summary}\n"
+
+    digest_html += "</ul>"
+    return digest_html, digest_md
 
 
 def send_email(html):
