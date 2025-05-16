@@ -1,4 +1,4 @@
-[![GitHub Actions Workflow Status](https://github.com/PaulDuvall/vibecoding/blob/main/.github/workflows/vibe-coding-digest.yml/badge.svg)](https://github.com/PaulDuvall/vibecoding/blob/main/.github/workflows/vibe-coding-digest.yml)
+[![GitHub Actions Workflow Status](https://github.com/PaulDuvall/vibecoding/actions/workflows/vibe-coding-digest.yml/badge.svg)](https://github.com/PaulDuvall/vibecoding/actions/workflows/vibe-coding-digest.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/python-3.11-blue.svg)
 ![GitHub last commit](https://img.shields.io/github/last-commit/PaulDuvall/vibecoding)
