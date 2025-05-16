@@ -1,5 +1,7 @@
 # .github/scripts/vibe_digest.py
 import os
+import sys
+import logging
 import feedparser
 import openai
 import requests
@@ -7,6 +9,12 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from aws_blog_search import fetch_aws_blog_posts
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(message)s',
+    handlers=[logging.StreamHandler(sys.stdout)]
+)
 
 
 # ---
@@ -110,8 +118,14 @@ def fetch_feed_items():
     """
     items = []
     for url in FEEDS:
-        feed = feedparser.parse(url)
-        items.extend(feed.entries[:3])
+        try:
+            feed = feedparser.parse(url)
+            if feed.bozo:
+                logging.warning(f"Feed parse error for {url}: {feed.bozo_exception}")
+                continue
+            items.extend(feed.entries[:3])
+        except Exception as e:
+            logging.error(f"Exception parsing feed {url}: {e}")
     return items[:10]
 
 
@@ -125,22 +139,26 @@ def summarize(text, source_name, source_url):
         "Focus on the big idea, highlight any tool or trend, tag it appropriately (e.g., \U0001f4c8 trend, \U0001f9ea tool, \U0001f512 security), and end with a useful takeaway.\n"
         "Use 3–4 short, data-rich sentences. Avoid fluff."
     )
-    response = openai.chat.completions.create(
-        model="gpt-4",
-        messages=[
-            {
-                "role": "system",
-                "content": (
-                    "You are an editorial assistant summarizing AI-assisted software development articles in the style of Paul Duvall."
-                    " Start with 'Source: [source name] ([source URL])', then summarize concisely."
-                    " Mimic Paul Duvall's clarity, structure, and engineering precision. Tag summaries with appropriate emojis."
-                )
-            },
-            {"role": "user", "content": prompt}
-        ],
-        max_tokens=300
-    )
-    return response.choices[0].message.content.strip()
+    try:
+        response = openai.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are an editorial assistant summarizing AI-assisted software development articles in the style of Paul Duvall."
+                        " Start with 'Source: [source name] ([source URL])', then summarize concisely."
+                        " Mimic Paul Duvall's clarity, structure, and engineering precision. Tag summaries with appropriate emojis."
+                    )
+                },
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=300
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        logging.error(f"OpenAI API error for '{source_name}': {e}")
+        return f"[Summary unavailable for {source_name}]"
 
 
 def format_digest(summaries):
@@ -175,24 +193,38 @@ def send_email(html):
     Raises:
         requests.exceptions.HTTPError: If the email fails to send
     """
+    email_to = os.getenv("EMAIL_TO")
+    email_from = os.getenv("EMAIL_FROM")
+    sendgrid_api_key = os.getenv("SENDGRID_API_KEY")
+    if not email_to or not email_from or not sendgrid_api_key:
+        logging.error("Missing EMAIL_TO, EMAIL_FROM, or SENDGRID_API_KEY environment variable.")
+        raise EnvironmentError("Required email environment variables not set.")
     payload = {
         "personalizations": [{
-            "to": [{"email": os.getenv("EMAIL_TO")}]
+            "to": [{"email": email_to}]
         }],
-        "from": {"email": os.getenv("EMAIL_FROM")},
+        "from": {"email": email_from},
         "subject": f"🧠 Daily Vibe Coding Digest – {datetime.now(ZoneInfo('America/New_York')).strftime('%B %d, %Y %-I:%M %p %Z')}",
         "content": [{"type": "text/html", "value": html}]
     }
     headers = {
-        "Authorization": f"Bearer {os.getenv('SENDGRID_API_KEY')}",
+        "Authorization": f"Bearer {sendgrid_api_key}",
         "Content-Type": "application/json"
     }
-    response = requests.post(
-        "https://api.sendgrid.com/v3/mail/send",
-        json=payload,
-        headers=headers
-    )
-    response.raise_for_status()
+    try:
+        response = requests.post(
+            "https://api.sendgrid.com/v3/mail/send",
+            json=payload,
+            headers=headers
+        )
+        response.raise_for_status()
+        logging.info("Digest email sent successfully.")
+    except requests.exceptions.HTTPError as e:
+        logging.error(f"SendGrid API error: {e}\nResponse: {getattr(e.response, 'text', None)}")
+        raise
+    except Exception as e:
+        logging.error(f"Unexpected error sending email: {e}")
+        raise
 
 
 def main():
@@ -202,51 +234,66 @@ def main():
     generating summaries, formatting them into an HTML digest, and sending
     the digest via email.
     """
+    # Validate required environment variables early
+    for var in ["OPENAI_API_KEY", "EMAIL_TO", "EMAIL_FROM", "SENDGRID_API_KEY"]:
+        if not os.getenv(var):
+            logging.error(f"Missing required environment variable: {var}")
+            sys.exit(1)
     items = fetch_feed_items()
     # --- Inject AWS Blog search results as synthetic feed items ---
-    aws_blog_posts = fetch_aws_blog_posts()
-    for post in aws_blog_posts:
-        items.append({
-            'title': post['title'],
-            'link': post['link'],
-            'summary': post['summary'],
-            'feed': {'href': 'https://aws.amazon.com/blogs/aws/feed/'},
-            '_synthetic_source_name': 'AWS Blog',
-            '_synthetic_source_url': 'https://aws.amazon.com/blogs/aws/',
-        })
+    try:
+        aws_blog_posts = fetch_aws_blog_posts()
+        for post in aws_blog_posts:
+            items.append({
+                'title': post['title'],
+                'link': post['link'],
+                'summary': post['summary'],
+                'feed': {'href': 'https://aws.amazon.com/blogs/aws/feed/'},
+                '_synthetic_source_name': 'AWS Blog',
+                '_synthetic_source_url': 'https://aws.amazon.com/blogs/aws/',
+            })
+    except Exception as e:
+        logging.error(f"Error fetching AWS Blog posts: {e}")
     summaries = []
     for item in items:
-        # Use synthetic source if present
-        if '_synthetic_source_name' in item:
-            source_name = item['_synthetic_source_name']
-            source_url = item['_synthetic_source_url']
-        else:
-            source_url = item.get('feedburner_origlink', None) or getattr(item, 'href', None) or getattr(item, 'feed', {}).get('href', None)
-            # fallback: use item.feed if available, otherwise try to match by link prefix
-            if not source_url:
-                for feed_url in FEEDS:
-                    if item.link.startswith(feed_url.split('/rss')[0]):
-                        source_url = feed_url
-                        break
-            # fallback: use feed_url from FEEDS if present in item's feed
-            if not source_url and hasattr(item, 'feed') and hasattr(item.feed, 'href'):
-                source_url = item.feed.href
-            # fallback: try to match by domain
-            if not source_url:
-                for feed_url in FEEDS:
-                    if feed_url.split('/')[2] in item.link:
-                        source_url = feed_url
-                        break
-            # fallback: just use the first FEEDS url
-            if not source_url:
-                source_url = FEEDS[0]
-            source_name = FEED_SOURCES.get(source_url, 'Unknown Source')
-        text = item['title'] + "\n" + item['link'] + "\n" + (item.get("summary", ""))
-        summaries.append(
-            summarize(text, source_name, source_url)
-        )
+        try:
+            # Use synthetic source if present
+            if '_synthetic_source_name' in item:
+                source_name = item['_synthetic_source_name']
+                source_url = item['_synthetic_source_url']
+            else:
+                source_url = item.get('feedburner_origlink', None) or getattr(item, 'href', None) or getattr(item, 'feed', {}).get('href', None)
+                # fallback: use item.feed if available, otherwise try to match by link prefix
+                if not source_url:
+                    for feed_url in FEEDS:
+                        if item.link.startswith(feed_url.split('/rss')[0]):
+                            source_url = feed_url
+                            break
+                # fallback: use feed_url from FEEDS if present in item's feed
+                if not source_url and hasattr(item, 'feed') and hasattr(item.feed, 'href'):
+                    source_url = item.feed.href
+                # fallback: try to match by domain
+                if not source_url:
+                    for feed_url in FEEDS:
+                        if feed_url.split('/')[2] in item.link:
+                            source_url = feed_url
+                            break
+                # fallback: just use the first FEEDS url
+                if not source_url:
+                    source_url = FEEDS[0]
+                source_name = FEED_SOURCES.get(source_url, 'Unknown Source')
+            text = item['title'] + "\n" + item['link'] + "\n" + (item.get("summary", ""))
+            summary = summarize(text, source_name, source_url)
+            summaries.append(summary)
+        except Exception as e:
+            logging.error(f"Error summarizing item '{item.get('title', 'NO TITLE')}': {e}")
+            summaries.append(f"[Summary unavailable for {item.get('title', 'NO TITLE')}]")
     digest_html, digest_md = format_digest(summaries)
-    send_email(digest_html)
+    try:
+        send_email(digest_html)
+    except Exception as e:
+        logging.error(f"Failed to send digest email: {e}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
