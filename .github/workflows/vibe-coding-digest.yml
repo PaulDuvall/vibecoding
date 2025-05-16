@@ -2,6 +2,7 @@
 name: Daily Vibe Coding Digest
 
 on:
+  push:
   schedule:
     # Runs once a day at 9AM US Eastern Time (13:00 UTC), note: UTC time does not account for daylight saving time
     - cron: "0 13 * * *"
