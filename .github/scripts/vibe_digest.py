@@ -157,7 +157,7 @@ def format_digest(summaries):
     """
     eastern = ZoneInfo('America/New_York')
     now_et = datetime.now(tz=eastern)
-    now_str = now_et.strftime('%Y-%m-%d %H:%M %Z')
+    now_str = now_et.strftime('%B %d, %Y %-I:%M %p %Z')
     digest = f"<h2>🧠 Vibe Coding Digest – {now_str}</h2><ul>"
     for summary in summaries:
         digest += f"<li>{summary}</li>"

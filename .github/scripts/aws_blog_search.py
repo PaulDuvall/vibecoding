@@ -2,27 +2,38 @@ import requests
 import feedparser
 from datetime import datetime
 
-def fetch_aws_blog_posts(query="vibe coding", max_results=3):
+def fetch_aws_blog_posts(queries=None, max_results_per_query=3):
     """
-    Search the AWS Blog RSS feed for posts matching the query.
+    Search the AWS Blog RSS feed for posts matching any of the queries.
     Returns a list of dicts with 'title', 'link', 'summary', and 'published'.
     """
-    # AWS Blog main feed
+    if queries is None:
+        queries = ["vibe coding", "security engineering"]
+    # Always include these related terms
+    queries += ["agentic coding", "amazon q developer", "codewhisperer", "vibe coding security engineering"]
     rss_url = "https://aws.amazon.com/blogs/aws/feed/"
     feed = feedparser.parse(rss_url)
+    seen_links = set()
     results = []
-    for entry in feed.entries:
-        # Search title and summary for the query (case-insensitive)
-        text = (entry.title + "\n" + entry.get("summary", "")).lower()
-        if query.lower() in text or "agentic coding" in text or "amazon q developer" in text or "codewhisperer" in text:
-            results.append({
-                "title": entry.title,
-                "link": entry.link,
-                "summary": entry.get("summary", ""),
-                "published": entry.get("published", ""),
-            })
-        if len(results) >= max_results:
-            break
+    for query in queries:
+        count = 0
+        for entry in feed.entries:
+            text = (entry.title + "\n" + entry.get("summary", "")).lower()
+            query_match = query.lower() in text
+            # For multi-word queries, also match if all words present
+            if not query_match and len(query.split()) > 1:
+                query_match = all(word in text for word in query.lower().split())
+            if query_match and entry.link not in seen_links:
+                results.append({
+                    "title": entry.title,
+                    "link": entry.link,
+                    "summary": entry.get("summary", ""),
+                    "published": entry.get("published", ""),
+                })
+                seen_links.add(entry.link)
+                count += 1
+            if count >= max_results_per_query:
+                break
     return results
 
 if __name__ == "__main__":
