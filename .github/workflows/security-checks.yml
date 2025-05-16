@@ -1,0 +1,35 @@
+# .github/workflows/security-checks.yml
+# Security checks workflow (referenced by main workflow)
+# Implements SAST and secrets scanning per .cicdrules.md
+
+name: Security Checks
+
+on:
+  workflow_call:
+
+jobs:
+  sast:
+    name: Static Application Security Testing (SAST)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+      - name: Run Bandit (Python SAST)
+        uses: tj-actions/bandit@v5
+        with:
+          targets: .
+        # Fails if any high-severity issues are found
+
+  secrets-scan:
+    name: Scan for Secrets (Gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+      - name: Run Gitleaks secrets scan
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          fail: true
+        # Fails if secrets are found
+
+# This workflow can be triggered from other workflows using 'uses: ./.github/workflows/security-checks.yml'
