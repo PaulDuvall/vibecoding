@@ -32,6 +32,7 @@ FEEDS = [
     "https://www.google.com/alerts/feeds/11805205268710618137/13681474149755866365",  # Google Alerts: Vibe Coding DevOps
     "https://www.google.com/alerts/feeds/11805205268710618137/6447382119890310773",    # Google Alerts: Vibe Coding Security
     "https://www.google.com/alerts/feeds/11805205268710618137/13093926530832902642",   # Google Alerts: Vibe Coding DevSecOps
+    "https://www.google.com/alerts/feeds/11805205268710618137/17153509184522491480",   # Google Alerts: OpenAI
     "https://www.cursor.sh/blog/rss.xml",           # Cursor Blog
     "https://windsurf.com/blog/rss.xml",            # Windsurf Blog
     "https://latent.space/feed",                    # Latent Space (Substack)
@@ -72,6 +73,7 @@ FEEDS = [
 # Mapping from feed URL to human-friendly source name
 FEED_SOURCES = {
     "https://www.google.com/alerts/feeds/11805205268710618137/2009129731931801714": "Google Alerts: Vibe Coding",
+    "https://www.google.com/alerts/feeds/11805205268710618137/17153509184522491480": "Google Alerts: OpenAI",
     # --- Core AI/Dev Feeds ---
     "https://www.cursor.sh/blog/rss.xml": "Cursor Blog",
     "https://windsurf.com/blog/rss.xml": "Windsurf Blog",
