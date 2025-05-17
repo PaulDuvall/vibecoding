@@ -61,13 +61,16 @@ jobs:
             -e AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" \
             -e AWS_SESSION_TOKEN="$AWS_SESSION_TOKEN" \
             -v ${{ github.workspace }}/prowler-report:/home/prowler/output \
-            toniblyx/prowler:latest -M html --severity critical
+            toniblyx/prowler:latest -M html --severity critical --output-directory /home/prowler/output
         env:
           AWS_REGION: us-east-1
           AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
           AWS_SESSION_TOKEN: ${{ env.AWS_SESSION_TOKEN }}
         # Uses Docker Hub prowler image, persists report to prowler-report/ for upload.
+
+      - name: List prowler-report directory for debug
+        run: ls -l prowler-report
 
       - name: Upload Prowler HTML report
         uses: actions/upload-artifact@v4
