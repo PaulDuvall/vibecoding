@@ -42,24 +42,6 @@ The velocity of innovation in AI and software tooling has made it increasingly d
   * Reddit https://www.reddit.com/r/vibecoding/ (and others)
   * Hacker News (tagged for AI, dev tools, and programming)
 
-### 2. 🤖 AI-Powered Summarization
-
-* Uses OpenAI’s GPT-4 model to generate:
-
-  * Concise yet context-rich summaries
-  * Retention of key technical insights and hyperlinks
-* Summaries capped at \~100–150 words each for readability
-
-### 3. 📩 Daily Email Delivery
-
-* Sends HTML-formatted digests via SendGrid
-* Mobile-optimized, minimal layout for readability
-* Includes:
-
-  * Digest title and date
-  * Source attribution
-  * Inline links to original articles
-
 ---
 
 ## **Technical Architecture**
@@ -71,15 +53,32 @@ The velocity of innovation in AI and software tooling has made it increasingly d
 | `GitHub Actions` | Orchestrates daily runs at 9 AM ET, handles logging & errors                   |
 | `vibe_digest.py` | Core script for data fetch, summarization, HTML generation, and email dispatch |
 | `tests/`         | Unit tests, mock inputs, linting (PEP8 + pylint)                               |
+| `DynamoDB/Aurora`| Stores daily digests with date-keyed records                                   |
+| `Lambda/API`     | CRUD endpoints for inserting and retrieving digests                            |
+| `Web UI`         | “History” page to display past digests                                         |
 
-### 🛠 Required GitHub Secrets
+#### Data Persistence Architecture Notes
 
-| Secret             | Purpose                                                                          |
-| ------------------ | -------------------------------------------------------------------------------- |
-| `OPENAI_API_KEY`   | Access GPT-4 for summarization                                                   |
-| `SENDGRID_API_KEY` | Authenticate with SendGrid                                                       |
-| `EMAIL_FROM`       | Verified sender email                                                            |
-| `EMAIL_TO`         | Recipient email (supports comma-separated for multi-recipient support in future) |
+- **AWS Service**: Use DynamoDB (preferred for serverless, scalable, and high-durability needs) or Aurora if relational features are required.
+- **Table Design**: Table keyed by `date` (YYYY-MM-DD). Attributes: `feed_source`, `title`, `url`, `summary`, `timestamp`.
+- **API Endpoints**:
+  - `POST /digest` (Lambda): Insert new daily digest records
+  - `GET /digest/{date}` (Lambda): Retrieve digest by date
+  - `GET /digest` (Lambda): List digests over a date range
+- **Web UI**: “History” page fetches and displays digests by date, with fast query and rendering.
+- **Security**: Apply least-privilege IAM roles for Lambda access. Enable point-in-time recovery for DynamoDB.
+
+---
+
+## **Success Metrics**
+
+* **Open rate > 50%**
+* **CTR on links > 10%**
+* **Daily content freshness > 90%**
+* **<1% failure rate across GitHub Action executions per week**
+* **Digest retrieval latency < 1 second**
+* **Data durability ≥ 99.9%**
+* **Web “History” page loads in < 500 ms**
 
 ---
 
