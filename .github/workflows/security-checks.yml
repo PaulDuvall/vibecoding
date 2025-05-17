@@ -53,17 +53,25 @@ jobs:
           aws-region: us-east-1
       - name: Run Prowler (CSPM)
         run: |
+          mkdir -p prowler-report
           docker run --rm \
             -e AWS_REGION=us-east-1 \
             -e AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" \
             -e AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" \
             -e AWS_SESSION_TOKEN="$AWS_SESSION_TOKEN" \
+            -v ${{ github.workspace }}/prowler-report:/home/prowler/output \
             toniblyx/prowler:latest -M html --severity critical
         env:
           AWS_REGION: us-east-1
           AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
           AWS_SESSION_TOKEN: ${{ env.AWS_SESSION_TOKEN }}
-        # Uses public prowler image from ghcr.io. Fails if any critical findings are detected. Requires OIDC role with least-privilege read access.
+        # Uses Docker Hub prowler image, persists report to prowler-report/ for upload.
+
+      - name: Upload Prowler HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: prowler-html-report
+          path: prowler-report/*.html
 
 # This workflow can be triggered from other workflows using 'uses: ./.github/workflows/security-checks.yml'
