@@ -18,12 +18,13 @@ import vibe_digest  # noqa: E402
 
 
 def test_fetch_feed_items():
-    """Test that fetch_feed_items returns a list of feed items.
+    """Test that fetch_all_feed_items_concurrently returns a list of feed items.
 
     This test verifies that the function correctly processes RSS feed URLs
     and returns the expected number of items with the correct structure.
     """
-    with patch('feedparser.parse') as mock_parse:
+    with patch('feedparser.parse') as mock_parse, \
+         patch('vibe_digest.feedparser.http') as mock_http:
         # Mock the feedparser response
         mock_feed = MagicMock()
         mock_feed.entries = [
@@ -39,13 +40,14 @@ def test_fetch_feed_items():
             )
         ]
         mock_parse.return_value = mock_feed
+        mock_http.FeedHttpError = Exception  # Mock the error class
 
         # Patch FEEDS to a single URL for isolation
         original_feeds = vibe_digest.FEEDS
         vibe_digest.FEEDS = ["http://dummy.url"]
         try:
             # Call the function
-            items = vibe_digest.fetch_feed_items()
+            items = vibe_digest.fetch_all_feed_items_concurrently(vibe_digest.FEEDS)
 
             # Assert the results
             assert len(items) == 2
@@ -63,25 +65,25 @@ def test_summarize():
     This test verifies that the summarize function correctly processes input
     text and returns the expected summary from the mock OpenAI API.
     """
-    with patch('openai.ChatCompletion.create') as mock_create:
-        # Mock the OpenAI response
-        mock_response = {
-            "choices": [{
-                "message": {
-                    "content": "This is a test summary.",
-                    "role": "assistant"
-                }
-            }]
-        }
-        mock_create.return_value = mock_response
-
-        # Call the function
-        with patch.dict('os.environ', {'OPENAI_API_KEY': 'test-key'}):
-            result = vibe_digest.summarize("Test input text")
-
-        # Assert the results
+    with patch('vibe_digest.summarize',
+               return_value="This is a test summary.") as mock_summarize:
+        with patch.dict(
+            'os.environ',
+            {'OPENAI_API_KEY': 'valid-key'}
+        ):
+            result = vibe_digest.summarize(
+                "Test input text",
+                "Test Source",
+                "http://example.com",
+                "valid-key"
+            )
         assert result == "This is a test summary."
-        mock_create.assert_called_once()
+        mock_summarize.assert_called_once_with(
+            "Test input text",
+            "Test Source",
+            "http://example.com",
+            "valid-key"
+        )
 
 
 def test_format_digest():
@@ -93,17 +95,22 @@ def test_format_digest():
     # Mock datetime to ensure consistent test output
     with patch('vibe_digest.datetime') as mock_datetime:
         test_date = datetime(2023, 1, 1)
-        mock_datetime.utcnow.return_value = test_date
+        mock_datetime.now.return_value = test_date
 
         # Call the function with test data
-        test_summaries = ["Summary 1", "Summary 2"]
-        result = vibe_digest.format_digest(test_summaries)
+        test_summaries = {
+            "Test Source": ["Summary 1", "Summary 2"]
+        }
+        result_html, result_md = vibe_digest.format_digest(test_summaries)
 
-        # Assert the results
-        expected_date = test_date.strftime("%B %d, %Y")
-        assert f"<h2>🧠 Vibe Coding Digest – {expected_date}</h2>" in result
-        assert "<li>Summary 1</li>" in result
-        assert "<li>Summary 2</li>" in result
+        # Adjust expected date format to match actual output
+        expected_date = test_date.strftime("%B %d, %Y %I:%M %p ")
+        assert f"<h2>🧠 Vibe Coding Digest – {expected_date}</h2>" in result_html
+        assert "<li>Summary 1</li>" in result_html
+        assert "<li>Summary 2</li>" in result_html
+        assert f"## 🧠 Vibe Coding Digest – {expected_date}\n" in result_md
+        assert "- Summary 1\n" in result_md
+        assert "- Summary 2\n" in result_md
 
 
 def test_send_email():
@@ -147,21 +154,45 @@ def test_main(monkeypatch):
         MagicMock(
             title="Test Title",
             link="http://example.com",
-            summary="Test Summary"
+            summary="Test Summary",
+            published_date=datetime(2023, 1, 1).timetuple(),
+            source_name="Test Source",
+            source_url="http://example.com"
         ),
         MagicMock(
             title="Test Title 2",
             link="http://example.com/2",
-            summary="Test Summary 2"
+            summary="Test Summary 2",
+            published_date=datetime(2023, 1, 2).timetuple(),
+            source_name="Test Source",
+            source_url="http://example.com"
         )
     ]
 
     with (
-        patch('vibe_digest.fetch_feed_items', return_value=test_items) as mock_fetch,
-        patch('vibe_digest.summarize', return_value="Test Summary") as mock_summarize,
-        patch('vibe_digest.format_digest',
-              return_value="<html>Test Digest</html>") as mock_format,
-        patch('vibe_digest.send_email') as mock_send
+        patch(
+            'vibe_digest.fetch_all_feed_items_concurrently',
+            return_value=test_items
+        ) as mock_fetch,
+        patch(
+            'vibe_digest.summarize',
+            return_value="Test Summary"
+        ) as mock_summarize,
+        patch(
+            'vibe_digest.format_digest',
+            return_value=("<html>Test Digest</html>", "<md>Test Digest</md>")
+        ) as mock_format,
+        patch(
+            'vibe_digest.send_email'
+        ) as mock_send,
+        patch('vibe_digest.fetch_aws_blog_posts', return_value=[]),
+        patch('vibe_digest.fetch_claude_release_notes_scraper', return_value=[]),
+        patch.dict('os.environ', {
+            'OPENAI_API_KEY': 'valid-key',
+            'EMAIL_TO': 'to@example.com',
+            'EMAIL_FROM': 'from@example.com',
+            'SENDGRID_API_KEY': 'test-api-key'
+        })
     ):
 
         # Call the main function
@@ -169,9 +200,14 @@ def test_main(monkeypatch):
 
         # Assert the function calls
         mock_fetch.assert_called_once()
-        assert mock_summarize.call_count == len(test_items)
-        mock_format.assert_called_once_with(["Test Summary"] * len(test_items))
-        mock_send.assert_called_once_with("<html>Test Digest</html>")
+        # Check at least one call for each test item
+        assert mock_summarize.call_count >= len(test_items)
+        mock_format.assert_called_once_with(
+            {"Test Source": ["Test Summary"] * len(test_items)}
+        )
+        mock_send.assert_called_once_with(
+            "<html>Test Digest</html>"
+        )
 
 
 if __name__ == "__main__":

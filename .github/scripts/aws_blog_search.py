@@ -1,16 +1,19 @@
-import requests
 import feedparser
-from datetime import datetime
+
 
 def fetch_aws_blog_posts(queries=None, max_results_per_query=3):
     """
     Search the AWS Blog RSS feed for posts matching any of the queries.
-    Returns a list of dicts with 'title', 'link', 'summary', and 'published'.
+    Returns a list of dicts with 'title', 'link', 'summary', and
+    'published'.
     """
     if queries is None:
         queries = ["vibe coding", "security engineering", "vibe coding security"]
-    # Always include these related terms
-    queries += ["agentic coding", "amazon q developer", "codewhisperer", "vibe coding security engineering", "vibe coding security"]
+    #  Always include these related terms
+    queries += [
+        "agentic coding", "amazon q developer", "codewhisperer",
+        "vibe coding security engineering", "vibe coding security"
+    ]
     rss_url = "https://aws.amazon.com/blogs/aws/feed/"
     feed = feedparser.parse(rss_url)
     seen_links = set()
@@ -36,7 +39,10 @@ def fetch_aws_blog_posts(queries=None, max_results_per_query=3):
                 break
     return results
 
+
 if __name__ == "__main__":
     posts = fetch_aws_blog_posts()
     for post in posts:
-        print(f"{post['title']}\n{post['link']}\n{post['summary']}\n---\n")
+        print(
+            f"{post['title']}\n{post['link']}\n{post['summary']}\n---\n"
+        )
