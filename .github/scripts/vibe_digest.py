@@ -6,8 +6,9 @@ import openai
 import requests
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from concurrent.futures import ThreadPoolExecutor
 from tenacity import retry, wait_exponential, stop_after_attempt
+from feeds import FEED_SOURCES, FEEDS, fetch_all_feed_items_concurrently
+from models import DigestItem
 
 # Assume aws_blog_search.py exists and works
 try:
@@ -23,143 +24,6 @@ logging.basicConfig(
     format='%(asctime)s %(levelname)s %(message)s',
     handlers=[logging.StreamHandler(sys.stdout)]
 )
-
-# ---
-# 📡 Feeds & Sources to Track (see PRD and README for details)
-# ---
-FEEDS = [
-    # --- Core AI/Dev Feeds ---
-    "https://www.google.com/alerts/feeds/11805205268710618137/2009129731931801714",
-    "https://www.google.com/alerts/feeds/11805205268710618137/13681474149755866365",
-    "https://www.google.com/alerts/feeds/11805205268710618137/6447382119890310773",
-    "https://www.google.com/alerts/feeds/11805205268710618137/13093926530832902642",
-    "https://www.google.com/alerts/feeds/11805205268710618137/17153509184522491480",
-    "https://www.cursor.sh/blog/rss.xml",  # Cursor Blog
-    "https://windsurf.com/blog/rss.xml",  # Windsurf Blog
-    "https://latent.space/feed",  # Latent Space (Substack)
-    "https://hnrss.org/newest?q=cursor+IDE&points=50",
-    "https://hnrss.org/newest?q=AI+coding&points=50",
-    "https://www.reddit.com/r/vibecoding/.rss",  # Reddit /r/vibecoding
-    "https://github.com/search?q=vibe+coding&type=repositories&format=rss",
-    # --- GitHub Copilot related ---
-    "https://hnrss.org/newest?q=github+copilot&points=50",
-    "https://www.reddit.com/search.rss?q=github+copilot&sort=hot",
-    "https://github.blog/feed/",  # GitHub Blog
-    # --- Recommended Additional Feeds ---
-    # Claude Code / Anthropic Release Notes (via RSSHub or custom scraper)
-    # "https://rsshub.app/anthropic/claude/release-notes",
-    # GitHub Trending (via unofficial API)
-    "https://github-trending-api.now.sh/repositories?language=python&since=daily",
-    # YouTube AI/ML Channels (placeholders, replace with actual channel IDs)
-    "https://www.youtube.com/feeds/videos.xml?channel_id=UCtzS3R3_eB0JgE-hM8mX8XQ",
-    "https://www.youtube.com/feeds/videos.xml?channel_id=UCuTaETsuCOh0P_XJg_i0wFQ",
-    "https://www.youtube.com/feeds/videos.xml?channel_id=UC6YI7W9_UuP5sF98d7_k5GA",
-    "https://www.youtube.com/feeds/videos.xml?channel_id=UCP_r0x3Y8S_D_h_FmYqg4Gw",
-    # Youtube for "AI coding" (via RSSHub)
-    # "https://rsshub.app/Youtube/ai%20coding",
-    # Product Hunt – AI Tools
-    "https://www.producthunt.com/topics/artificial-intelligence.rss",
-    # Reddit – Broader AI Communities
-    "https://www.reddit.com/r/MachineLearning/.rss",
-    "https://www.reddit.com/r/artificial/.rss",
-    "https://www.reddit.com/r/programming/.rss",
-    # Official Blogs
-    "https://openai.com/news/rss.xml",
-    "https://www.anthropic.com/news/feed.xml",
-    "https://ai.googleblog.com/feeds/posts/default",
-    # GitHub Releases for popular AI/DevOps tools (example)
-    "https://github.com/langchain-ai/langchain/releases.atom",
-    "https://github.com/microsoft/autogen/releases.atom",
-]
-
-# Mapping from feed URL to human-friendly source name
-FEED_SOURCES = {
-    # Google Alerts (ensure these match your actual alert IDs)
-    "https://www.google.com/alerts/feeds/11805205268710618137/2009129731931801714":
-        "Google Alerts: Vibe Coding",
-    "https://www.google.com/alerts/feeds/11805205268710618137/13681474149755866365":
-        "Google Alerts: Vibe Coding DevOps",
-    "https://www.google.com/alerts/feeds/11805205268710618137/6447382119890310773":
-        "Google Alerts: Vibe Coding Security",
-    "https://www.google.com/alerts/feeds/11805205268710618137/13093926530832902642":
-        "Google Alerts: Vibe Coding DevSecOps",
-    "https://www.google.com/alerts/feeds/11805205268710618137/17153509184522491480":
-        "Google Alerts: OpenAI",
-    # --- Core AI/Dev Feeds ---
-    "https://www.cursor.sh/blog/rss.xml": "Cursor Blog",
-    "https://windsurf.com/blog/rss.xml": "Windsurf Blog",
-    "https://latent.space/feed": "Latent Space (Substack)",
-    "https://hnrss.org/newest?q=cursor+IDE&points=50":
-        "Hacker News (Cursor IDE)",
-    "https://hnrss.org/newest?q=AI+coding&points=50":
-        "Hacker News (AI Coding)",
-    "https://www.reddit.com/r/vibecoding/.rss": "Reddit /r/vibecoding",
-    "https://github.com/search?q=vibe+coding&type=repositories&format=rss":
-        "GitHub Search (Vibe Coding)",
-    # --- GitHub Copilot related ---
-    "https://hnrss.org/newest?q=github+copilot&points=50":
-        "Hacker News (GitHub Copilot)",
-    "https://www.reddit.com/search.rss?q=github+copilot&sort=hot":
-        "Reddit Search (GitHub Copilot)",
-    "https://github.blog/feed/": "GitHub Blog",
-    # --- Recommended Additional Feeds ---
-    (
-        "https://github-trending-api.now.sh/repositories"
-        "?language=python&since=daily"
-    ): "GitHub Trending (Python, daily)",
-    # Placeholder: Yannic Kilcher
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCtzS3R3_eB0JgE-hM8mX8XQ"):
-        "YouTube: Yannic Kilcher",
-    # Placeholder: Two Minute Papers
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCuTaETsuCOh0P_XJg_i0wFQ"):
-        "YouTube: Two Minute Papers",
-    # Placeholder: OpenAI
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6YI7W9_UuP5sF98d7_k5GA"):
-        "YouTube: OpenAI",
-    # Placeholder: Latent Space Podcast
-    ("https://www.youtube.com/feeds/videos.xml?channel_id=UCP_r0x3Y8S_D_h_FmYqg4Gw"):
-        "YouTube: Latent Space Podcast",
-    "https://www.producthunt.com/topics/artificial-intelligence.rss":
-        "Product Hunt: AI",
-    "https://www.reddit.com/r/MachineLearning/.rss": "Reddit: MachineLearning",
-    "https://www.reddit.com/r/artificial/.rss":
-        "Reddit: Artificial Intelligence",
-    "https://www.reddit.com/r/programming/.rss": "Reddit: Programming",
-    "https://openai.com/news/rss.xml": "OpenAI News",
-    "https://www.anthropic.com/news/feed.xml": "Anthropic Blog",
-    "https://ai.googleblog.com/feeds/posts/default": "Google AI Blog",
-    "https://github.com/langchain-ai/langchain/releases.atom":
-        "GitHub Releases: LangChain",
-    "https://github.com/microsoft/autogen/releases.atom":
-        "GitHub Releases: AutoGen",
-    # Placeholder for AWS Blog (synthetic source)
-    'https://aws.amazon.com/blogs/aws/feed/': 'AWS Blog',
-    # Placeholder for Claude Release Notes
-    "Claude Release Notes (Scraper)": "Claude Release Notes"
-}
-
-
-class DigestItem:
-    """Standardized structure for a digest item."""
-    def __init__(self, title, link, summary, source_name, source_url,
-                 published_date=None, author=None):
-        self.title = title
-        self.link = link
-        self.summary = summary
-        self.source_name = source_name
-        self.source_url = source_url
-        self.published_date = published_date
-        self.author = author
-
-    def __hash__(self):
-        # Use a combination of title and link for hashing to detect duplicates
-        return hash((self.title, self.link))
-
-    def __eq__(self, other):
-        if not isinstance(other, DigestItem):
-            return NotImplemented
-        # Compare title and link for equality to detect duplicates
-        return self.title == other.title and self.link == other.link
 
 
 @retry(
@@ -212,17 +76,6 @@ def fetch_single_feed(url):
     except Exception as e:
         logging.error(f"Exception fetching or parsing feed {url}: {e}")
     return digest_items
-
-
-def fetch_all_feed_items_concurrently(feeds_list):
-    """Fetches items from all RSS feeds concurrently."""
-    all_items = []
-    with ThreadPoolExecutor(max_workers=5) as executor:
-        # Use list comprehension to trigger execution and collect results
-        results = list(executor.map(fetch_single_feed, feeds_list))
-        for items_from_feed in results:
-            all_items.extend(items_from_feed)
-    return all_items
 
 
 def fetch_claude_release_notes_scraper():
