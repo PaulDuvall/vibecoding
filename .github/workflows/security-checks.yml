@@ -49,7 +49,7 @@ jobs:
       - name: Assume OIDC Role
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.GHA_OIDC_ROLE_ARN }}
+          role-to-assume: ${{ vars.GHA_OIDC_ROLE_ARN }}
           aws-region: us-east-1
       - name: Run Prowler (CSPM)
         run: |
