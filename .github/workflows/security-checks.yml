@@ -58,7 +58,7 @@ jobs:
             -e AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" \
             -e AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" \
             -e AWS_SESSION_TOKEN="$AWS_SESSION_TOKEN" \
-            toniblyx/prowler:latest -M html -S critical
+            toniblyx/prowler:latest -M html --severity critical
         env:
           AWS_REGION: us-east-1
           AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
