@@ -64,6 +64,7 @@ FEEDS = [
     "https://www.reddit.com/r/programming/.rss",      # Reddit: Programming
     # Official Blogs
     "https://openai.com/blog/rss",                    # OpenAI Blog
+    "https://openai.com/news/rss",                    # OpenAI News
     "https://www.anthropic.com/news/feed.xml",        # Anthropic Blog
     "https://ai.googleblog.com/feeds/posts/default",  # Google AI Blog
 ]
@@ -99,6 +100,7 @@ FEED_SOURCES = {
     "https://www.reddit.com/r/artificial/.rss": "Reddit: Artificial Intelligence",
     "https://www.reddit.com/r/programming/.rss": "Reddit: Programming",
     "https://openai.com/blog/rss": "OpenAI Blog",
+    "https://openai.com/news/rss": "OpenAI News",
     "https://www.anthropic.com/news/feed.xml": "Anthropic Blog",
     "https://ai.googleblog.com/feeds/posts/default": "Google AI Blog",
 }
