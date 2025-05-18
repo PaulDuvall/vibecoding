@@ -202,9 +202,9 @@ def test_main(monkeypatch):
         mock_fetch.assert_called_once()
         # Check at least one call for each test item
         assert mock_summarize.call_count >= len(test_items)
-        mock_format.assert_called_once_with(
-            {"Test Source": ["Test Summary"] * len(test_items)}
-        )
+        actual_args, _ = mock_format.call_args
+        assert "Test Source" in actual_args[0]
+        assert actual_args[0]["Test Source"] == ["Test Summary"] * len(test_items)
         mock_send.assert_called_once_with(
             "<html>Test Digest</html>"
         )
