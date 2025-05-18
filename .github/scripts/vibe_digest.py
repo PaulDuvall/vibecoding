@@ -2,13 +2,14 @@ import os
 import sys
 import logging
 import feedparser
-import openai
-import requests
+
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from tenacity import retry, wait_exponential, stop_after_attempt
 from feeds import FEED_SOURCES, FEEDS, fetch_all_feed_items_concurrently
 from models import DigestItem
+from summarize import summarize
+from email_utils import send_email
 
 # Assume aws_blog_search.py exists and works
 try:
@@ -111,63 +112,11 @@ def fetch_claude_release_notes_scraper():
     return []
 
 
-def summarize(text, source_name, source_url, openai_api_key):
-    openai.api_key = openai_api_key
-    # Truncate text for prompt to stay within token limits and focus on main content
-    effective_text = text[:8000]
-
-    prompt = (
-        f"Source: {source_name} ({source_url})\n"
-        f"Article:\n{effective_text}\n\n"
-        "Summarize in the tone and clarity of a high-signal AI newsletter like "
-        "'The Vibe'. Write in the voice of Paul Duvall. Prioritize clarity, "
-        "precision, and relevance to experienced software engineers.\n"
-        "Focus on the big idea, highlight any tool or trend, tag it appropriately "
-        "(e.g., 📈 trend, 🛠️ tool, 🔒 security, 🔬 research, 🚀 release), "
-        "and end with a useful takeaway.\n"
-        "Use 3–4 short, data-rich sentences. Avoid fluff."
-    )
-    try:
-        response = openai.chat.completions.create(
-            model="gpt-4o",  # Using gpt-4o for potentially better performance/cost
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "You are an editorial assistant summarizing AI-assisted"
-                        " software development articles in the style of Paul Duvall."
-                        " Start with 'Source: [source name] ([source URL])', then"
-                        " summarize concisely. Mimic Paul Duvall's clarity, structure,"
-                        " and engineering precision. Tag summaries with appropriate"
-                        " emojis. Include the original article link prominently in"
-                        " the summary."
-                    )
-                },
-                {"role": "user", "content": prompt}
-            ],
-            max_tokens=300,
-            temperature=0.7
-        )
-        return response.choices[0].message.content.strip()
-    except openai.APIError as e:
-        logging.error(
-            f"OpenAI API error for '{source_name}' (HTTP {e.status_code}): "
-            f"{e.response.text}"
-        )
-        return f"[Summary unavailable for {source_name} - OpenAI API Error]"
-    except Exception as e:
-        logging.error(
-            f"Unexpected error during OpenAI API call for '{source_name}': {e}"
-        )
-        return f"[Summary unavailable for {source_name} - Internal Error]"
-
-
 def format_digest(summaries_by_source):
     """Format the digest into HTML and Markdown, grouped by source."""
     eastern = ZoneInfo('America/New_York')
     now_et = datetime.now(tz=eastern)
     now_str = now_et.strftime('%B %d, %Y %-I:%M %p %Z')
-
     digest_html = f"<h2>🧠 Vibe Coding Digest – {now_str}</h2>"
     digest_md = f"## 🧠 Vibe Coding Digest – {now_str}\n"
 
@@ -180,54 +129,6 @@ def format_digest(summaries_by_source):
         digest_html += "</ul>"
 
     return digest_html, digest_md
-
-
-def send_email(html):
-    """Send an email with the digest using SendGrid API."""
-    email_to = os.getenv("EMAIL_TO")
-    email_from = os.getenv("EMAIL_FROM")
-    sendgrid_api_key = os.getenv("SENDGRID_API_KEY")
-
-    if not email_to or not email_from or not sendgrid_api_key:
-        logging.error(
-            "Missing EMAIL_TO, EMAIL_FROM, or SENDGRID_API_KEY environment variable."
-        )
-        raise EnvironmentError("Required email environment variables not set.")
-
-    now_in_eastern = datetime.now(ZoneInfo('America/New_York'))
-    now_et_formatted = now_in_eastern.strftime(
-        '%B %d, %Y %-I:%M %p %Z'
-    )
-    subject = f"🧠 Daily Vibe Coding Digest – {now_et_formatted}"
-
-    payload = {
-        "personalizations": [{"to": [{"email": email_to}]}],
-        "from": {"email": email_from},
-        "subject": subject,
-        "content": [{"type": "text/html", "value": html}]
-    }
-    headers = {
-        "Authorization": f"Bearer {sendgrid_api_key}",
-        "Content-Type": "application/json"
-    }
-    try:
-        response = requests.post(
-            "https://api.sendgrid.com/v3/mail/send",
-            json=payload,
-            headers=headers,
-            timeout=10
-        )
-        response.raise_for_status()
-        logging.info("Digest email sent successfully.")
-    except requests.exceptions.HTTPError as e:
-        logging.error(
-            f"SendGrid API error: {e}\nResponse: "
-            f"{getattr(e.response, 'text', None)}"
-        )
-        raise
-    except Exception as e:
-        logging.error(f"Unexpected error sending email: {e}")
-        raise
 
 
 def main():
