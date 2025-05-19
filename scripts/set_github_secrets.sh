@@ -18,14 +18,31 @@ REPO="$1"
 
 echo "Setting GitHub secrets for repository: $REPO"
 
-read -s -p "Enter your OPENAI_API_KEY: " OPENAI_API_KEY; echo
-read -p "Enter your EMAIL_TO address: " EMAIL_TO
-read -p "Enter your EMAIL_FROM address: " EMAIL_FROM
-read -s -p "Enter your SENDGRID_API_KEY: " SENDGRID_API_KEY; echo
+# Get list of existing secrets
+EXISTING_SECRETS=$(gh secret list -R "$REPO" | awk '{print $1}')
 
-gh secret set OPENAI_API_KEY -b"$OPENAI_API_KEY" -R "$REPO"
-gh secret set EMAIL_TO -b"$EMAIL_TO" -R "$REPO"
-gh secret set EMAIL_FROM -b"$EMAIL_FROM" -R "$REPO"
-gh secret set SENDGRID_API_KEY -b"$SENDGRID_API_KEY" -R "$REPO"
+set_secret() {
+  local secret_name="$1"
+  local prompt="$2"
+  local silent="$3"
+  if echo "$EXISTING_SECRETS" | grep -qx "$secret_name"; then
+    echo "[SKIP] $secret_name already set."
+  else
+    if [ "$silent" = "silent" ]; then
+      read -s -p "$prompt" secret_value; echo
+    else
+      read -p "$prompt" secret_value
+    fi
+    gh secret set "$secret_name" -b"$secret_value" -R "$REPO"
+    echo "[SET] $secret_name set."
+  fi
+}
 
-echo "✅ All secrets set successfully for $REPO"
+set_secret "OPENAI_API_KEY" "Enter your OPENAI_API_KEY: " silent
+set_secret "EMAIL_TO" "Enter your EMAIL_TO address: "
+set_secret "EMAIL_FROM" "Enter your EMAIL_FROM address: "
+set_secret "SENDGRID_API_KEY" "Enter your SENDGRID_API_KEY: " silent
+set_secret "GITLEAKS_LICENSE" "Enter your GITLEAKS_LICENSE: " silent
+
+echo "✅ All secrets processed for $REPO"
+# GITLEAKS_LICENSE is now available as a GitHub Actions secret for use in workflows.

@@ -33,9 +33,9 @@ jobs:
         uses: actions/checkout@v3
       - name: Run Gitleaks secrets scan
         uses: gitleaks/gitleaks-action@v2
-        with:
-          fail: true
-        # Fails if secrets are found
+        env:
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+        # Uses license secret for compliance; fails if secrets are found
 
   # prowler:
   #   name: AWS Security Best Practices (Prowler)
