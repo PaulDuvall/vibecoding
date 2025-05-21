@@ -29,59 +29,16 @@ logging.basicConfig(
     handlers=[logging.StreamHandler(sys.stdout)],
 )
 
-
-@retry(
-    wait=wait_exponential(multiplier=1, min=2, max=10),
-    stop=stop_after_attempt(3),
-    reraise=True,
-)
-def fetch_single_feed(url):
-    """Fetches and parses a single RSS/Atom feed."""
-    logging.info(f"Fetching feed: {url}")
-    digest_items = []
-    feed = feedparser.parse(url)
-
-    if feed.bozo and isinstance(feed.bozo_exception, feedparser.http.FeedHttpError):
-        logging.warning(f"Retriable parse error for {url}: {feed.bozo_exception}")
-        raise Exception("Retriable feed parse error")
-
-    source_name = FEED_SOURCES.get(url, "Unknown Source")
-    for entry in feed.entries[:3]:
-        link = getattr(entry, "link", None) or entry.get("feedburner_origlink")
-        if not link:
-            logging.warning(f"Skipping {source_name} entry with no link: {entry}")
-            continue
-
-        title = getattr(entry, "title", "No Title")
-        summary = entry.get("summary") or entry.get("description", "")
-        published = getattr(entry, "published_parsed", None)
-        author = getattr(entry, "author", None)
-
-        digest_items.append(
-            DigestItem(
-                title=title,
-                link=link,
-                summary=summary,
-                source_name=source_name,
-                source_url=url,
-                published_date=published,
-                author=author,
-            )
-        )
-
-    logging.info(f"Fetched {len(digest_items)} items from {source_name}")
-    return digest_items
-
-
-def fetch_claude_release_notes_scraper():
-    """
-    A placeholder scraper for Claude Release Notes.
-    In production, replace with BeautifulSoup-based parsing, rate-limit handling, etc.
-    """
-    url = "https://docs.anthropic.com/claude/docs/claude-release-notes"
-    logging.info(f"Scraping Claude Release Notes from: {url}")
-    # TODO: real scraping logic here
-    return []
+# TODO: Implement a proper scraper for Claude Release Notes or remove this function.
+# def fetch_claude_release_notes_scraper():
+#     """
+#     A placeholder scraper for Claude Release Notes.
+#     In production, replace with BeautifulSoup-based parsing, rate-limit handling, etc.
+#     """
+#     url = "https://docs.anthropic.com/claude/docs/claude-release-notes"
+#     logging.info(f"Scraping Claude Release Notes from: {url}")
+#     # TODO: real scraping logic here
+#     return []
 
 
 def format_digest(summaries_by_source):
@@ -140,9 +97,10 @@ def main():
         except Exception as exc:
             logging.error(f"AWS Blog fetch failed: {exc}")
 
-    # Add scraped Claude notes
-    for item in fetch_claude_release_notes_scraper():
-        all_items.append(item)
+    # TODO: Implement or remove Claude release notes scraping.
+    # # Add scraped Claude notes
+    # for item in fetch_claude_release_notes_scraper():
+    #     all_items.append(item)
 
     # Dedupe & sort
     unique_items = list(dict.fromkeys(all_items))

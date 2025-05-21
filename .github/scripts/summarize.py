@@ -40,14 +40,42 @@ def summarize(text, source_name, source_url, openai_api_key):
             temperature=0.7
         )
         return response.choices[0].message.content.strip()
-    except openai.APIError as e:
+    except openai.RateLimitError as e:
         logging.error(
-            f"OpenAI API error for '{source_name}' (HTTP {e.status_code}): "
-            f"{e.response.text}"
+            f"OpenAI RateLimitError for '{source_name}': HTTP Status: {e.status_code}, "
+            f"Response: {e.response.text if e.response else 'N/A'}, Message: {e.message}"
+        )
+        return f"[Summary unavailable for {source_name} - OpenAI Rate Limit Error]"
+    except openai.AuthenticationError as e:
+        logging.error(
+            f"OpenAI AuthenticationError for '{source_name}': HTTP Status: {e.status_code}, "
+            f"Response: {e.response.text if e.response else 'N/A'}, Message: {e.message}"
+        )
+        return f"[Summary unavailable for {source_name} - OpenAI Authentication Error]"
+    except openai.APIConnectionError as e:
+        logging.error(
+            f"OpenAI APIConnectionError for '{source_name}': Message: {e.message}"
+        )
+        return f"[Summary unavailable for {source_name} - OpenAI Connection Error]"
+    except openai.APITimeoutError as e:
+        logging.error(
+            f"OpenAI APITimeoutError for '{source_name}': Message: {e.message}"
+        )
+        return f"[Summary unavailable for {source_name} - OpenAI Timeout Error]"
+    except openai.InvalidRequestError as e:
+        logging.error(
+            f"OpenAI InvalidRequestError for '{source_name}': HTTP Status: {e.status_code if hasattr(e, 'status_code') else 'N/A'}, "
+            f"Message: {e.message}, Param: {e.param if hasattr(e, 'param') else 'N/A'}"
+        )
+        return f"[Summary unavailable for {source_name} - OpenAI Invalid Request Error]"
+    except openai.APIError as e:  # General API error
+        logging.error(
+            f"OpenAI APIError for '{source_name}': HTTP Status: {e.status_code}, "
+            f"Response: {e.response.text if e.response else 'N/A'}, Message: {e.message}"
         )
         return f"[Summary unavailable for {source_name} - OpenAI API Error]"
-    except Exception as e:
+    except Exception as e:  # Catch-all for other errors
         logging.error(
-            f"Unexpected error during OpenAI API call for '{source_name}': {e}"
+            f"Unexpected error during OpenAI API call for '{source_name}': {type(e).__name__} - {e}"
         )
         return f"[Summary unavailable for {source_name} - Internal Error]"
