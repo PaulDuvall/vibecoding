@@ -1,6 +1,26 @@
 import feedparser
 
 
+def _is_query_match(text, query):
+    """
+    Checks if a query matches the given text (case-insensitive).
+    Considers exact phrase match and all words present for multi-word queries.
+    """
+    text_lower = text.lower()
+    query_lower = query.lower()
+
+    # Exact phrase match
+    if query_lower in text_lower:
+        return True
+
+    # All words present match for multi-word queries
+    query_words = query_lower.split()
+    if len(query_words) > 1:
+        if all(word in text_lower for word in query_words):
+            return True
+    return False
+
+
 def fetch_aws_blog_posts(queries=None, max_results_per_query=3):
     """
     Search the AWS Blog RSS feed for posts matching any of the queries.
@@ -21,12 +41,8 @@ def fetch_aws_blog_posts(queries=None, max_results_per_query=3):
     for query in queries:
         count = 0
         for entry in feed.entries:
-            text = (entry.title + "\n" + entry.get("summary", "")).lower()
-            query_match = query.lower() in text
-            # For multi-word queries, also match if all words present
-            if not query_match and len(query.split()) > 1:
-                query_match = all(word in text for word in query.lower().split())
-            if query_match and entry.link not in seen_links:
+            text_to_search = entry.title + "\n" + entry.get("summary", "")
+            if _is_query_match(text_to_search, query) and entry.link not in seen_links:
                 results.append({
                     "title": entry.title,
                     "link": entry.link,
