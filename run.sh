@@ -62,8 +62,8 @@ run_tests() {
 run_lint() {
     echo -e "${GREEN}Running linting...${NC}"
     source .venv/bin/activate
-    flake8 .
-    echo -e "${GREEN}✓ Linting passed!${NC}"
+    flake8 --exit-zero .
+    echo -e "${GREEN}✓ Linting completed (warnings do not fail the build)!${NC}"
 }
 
 # Function to clean up

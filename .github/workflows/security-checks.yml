@@ -18,6 +18,10 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
+      - name: Run flake8 (warn only)
+        run: |
+          pip install flake8
+          flake8 --exit-zero .
       - name: Run Bandit (Python SAST)
         uses: tj-actions/bandit@v5
         with:

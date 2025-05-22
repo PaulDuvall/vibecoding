@@ -1,35 +1,38 @@
 import feedparser
 
 
+import re
+
 def _is_query_match(text, query):
     """
     Checks if a query matches the given text (case-insensitive).
-    Considers exact phrase match and all words present for multi-word queries.
+    For single-word queries, matches only whole words.
+    For multi-word queries, matches if all words are present, regardless of order.
     """
     text_lower = text.lower()
     query_lower = query.lower()
-
-    # Exact phrase match
-    if query_lower in text_lower:
-        return True
-
-    # All words present match for multi-word queries
-    query_words = query_lower.split()
-    if len(query_words) > 1:
-        if all(word in text_lower for word in query_words):
-            return True
-    return False
+    words = query_lower.split()
+    if len(words) == 1:
+        # Single word: match only whole word
+        pattern = r'\b{}\b'.format(re.escape(query_lower))
+        return re.search(pattern, text_lower) is not None
+    else:
+        # Multi-word: match if all words are present, regardless of order
+        return all(re.search(r'\b{}\b'.format(re.escape(word)), text_lower) for word in words)
 
 
-def fetch_aws_blog_posts(queries=None, max_results_per_query=3):
+
+def fetch_aws_blog_posts(base_queries=None, max_results_per_query=3):
     """
     Search the AWS Blog RSS feed for posts matching any of the queries.
     Returns a list of dicts with 'title', 'link', 'summary', and
     'published'.
     """
-    if queries is None:
+    if base_queries is None:
         queries = ["vibe coding", "security engineering", "vibe coding security"]
-    #  Always include these related terms
+    else:
+        queries = list(base_queries)
+    # Always include these related terms
     queries += [
         "agentic coding", "amazon q developer", "codewhisperer",
         "vibe coding security engineering", "vibe coding security"
