@@ -102,9 +102,7 @@ def format_digest(summaries_by_source):
     return html, md
 
 
-def main():
-    """Main entry point: fetch, summarize, and send the digest."""
-    # Validate environment
+def validate_environment():
     required = {
         "OPENAI_API_KEY": os.getenv("OPENAI_API_KEY"),
         "EMAIL_TO": os.getenv("EMAIL_TO"),
@@ -116,10 +114,12 @@ def main():
             logging.error(f"Missing required environment variable: {var}")
             sys.exit(1)
 
-    # Fetch feeds
-    all_items = fetch_all_feed_items_concurrently(FEEDS)
 
-    # Optionally add AWS Blog posts
+def gather_feed_items():
+    return fetch_all_feed_items_concurrently(FEEDS)
+
+
+def add_aws_blog_posts(all_items):
     if fetch_aws_blog_posts:
         try:
             aws_posts = fetch_aws_blog_posts()
@@ -140,18 +140,22 @@ def main():
         except Exception as exc:
             logging.error(f"AWS Blog fetch failed: {exc}")
 
-    # Add scraped Claude notes
+
+def add_claude_release_notes(all_items):
     for item in fetch_claude_release_notes_scraper():
         all_items.append(item)
 
-    # Dedupe & sort
+
+def dedupe_and_sort_items(all_items):
     unique_items = list(dict.fromkeys(all_items))
     unique_items.sort(
         key=lambda x: x.published_date or datetime.min.timetuple(),
         reverse=True,
     )
+    return unique_items
 
-    # Summarize
+
+def summarize_items(unique_items):
     summaries = {}
     for item in unique_items:
         text = (
@@ -180,16 +184,28 @@ def main():
         # Limit to first 10 sources
         if len(summaries) >= 10:
             break
+    return summaries
 
-    # Generate & send
+
+def generate_and_send_digest(summaries):
     html, md = format_digest(summaries)
     logging.info("\n--- Generated Markdown Digest ---\n%s\n--- End ---", md)
-
     try:
         send_email(html)
     except Exception as exc:
         logging.error(f"Email send failed: {exc}")
         sys.exit(1)
+
+
+def main():
+    """Main entry point: fetch, summarize, and send the digest."""
+    validate_environment()
+    all_items = gather_feed_items()
+    add_aws_blog_posts(all_items)
+    add_claude_release_notes(all_items)
+    unique_items = dedupe_and_sort_items(all_items)
+    summaries = summarize_items(unique_items)
+    generate_and_send_digest(summaries)
 
 
 if __name__ == "__main__":
