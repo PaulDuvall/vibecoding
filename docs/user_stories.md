@@ -103,4 +103,82 @@ This document defines user stories for the Vibe Digest system, derived from the 
 
 ---
 
-_Traceability: Link each user story to its implementation and test files as development progresses._
+## US-201: Log OpenAI Token Usage Per Summarization
+**As** a system maintainer,
+**I want** each OpenAI API call in the summarization process to log the actual prompt, completion, and total token usage,
+**so that** I can accurately track usage per item.
+
+**Acceptance Criteria:**
+- Each call to the OpenAI API logs:
+  - Prompt tokens used
+  - Completion tokens used
+  - Total tokens used
+- Logs are written to the application log and/or a structured in-memory report for aggregation.
+
+**Test Coverage:**
+- Unit tests verify that after a summarization call, the returned usage metrics are logged and/or recorded.
+- Mock OpenAI responses in tests to ensure logging works without real API calls.
+
+---
+
+## US-202: Aggregate and Calculate Total OpenAI Usage and Cost Per Run
+**As** a system maintainer,
+**I want** the system to aggregate total OpenAI token usage and calculate the total cost for each run based on current pricing,
+**so that** I can monitor and control operational expenses.
+
+**Acceptance Criteria:**
+- The system aggregates all prompt, completion, and total tokens used in a run.
+- The system calculates the cost using actual token counts and current model pricing (e.g., gpt-4o).
+- The cost calculation logic is encapsulated and unit-testable.
+
+**Test Coverage:**
+- Unit tests verify correct aggregation and cost calculation for various token usage scenarios.
+- Tests include different pricing rates and edge cases (e.g., zero usage).
+
+---
+
+## US-203: Display OpenAI Usage and Cost in Digest Email
+**As** a digest recipient,
+**I want** the total OpenAI usage and cost for the run to be included in the daily digest email,
+**so that** I am always aware of the operational cost of each digest.
+
+**Acceptance Criteria:**
+- The digest email includes a section at the bottom showing:
+  - Total prompt tokens
+  - Total completion tokens
+  - Total tokens
+  - Total cost (USD)
+- The information is clearly formatted and easy to find.
+
+**Test Coverage:**
+- Automated tests verify that the email includes the correct usage and cost information for a simulated run.
+- Tests check for proper formatting and presence of all required fields.
+
+---
+
+## US-204: Document OpenAI Usage and Cost Tracking Feature
+**As** a user or maintainer,
+**I want** documentation describing how OpenAI usage and cost tracking works,
+**so that** I understand how to interpret the reported values and update pricing if needed.
+
+**Acceptance Criteria:**
+- The README and/or user documentation describes:
+  - How usage and cost are tracked and reported
+  - Where to find the cost in the email
+  - How to update pricing logic if OpenAI rates change
+
+**Test Coverage:**
+- Documentation review checklist ensures all new features and fields are described.
+- Traceability matrix links this story to the relevant documentation files.
+
+---
+
+### Traceability Table
+
+| User Story | Implementation Files         | Test Files                   | Docs/Links                  |
+|------------|-----------------------------|------------------------------|-----------------------------|
+| US-201     | summarize.py, vibe_digest.py| tests/test_summarize.py      |                             |
+| US-202     | vibe_digest.py              | tests/test_vibe_digest.py    |                             |
+| US-203     | email_utils.py, vibe_digest.py| tests/test_email_utils.py   |                             |
+| US-204     | README.md, user_stories.md  | N/A                          | docs/user_stories.md        |
+
