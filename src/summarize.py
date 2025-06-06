@@ -4,11 +4,11 @@ from typing import List, Dict, Tuple
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from tenacity import retry, stop_after_attempt, wait_exponential
 import hashlib
-import os
 
 
 # Initialize OpenAI client once
 _openai_client = None
+
 
 def get_openai_client(api_key: str) -> openai.OpenAI:
     """Get or create OpenAI client instance."""
@@ -43,10 +43,10 @@ def _make_openai_request(client: openai.OpenAI, messages: List[Dict], source_nam
             timeout=30  # Add explicit timeout
         )
         return response.choices[0].message.content.strip()
-    except openai.RateLimitError as e:
+    except openai.RateLimitError:
         logging.warning(f"Rate limit hit for '{source_name}', retrying...")
         raise  # Let tenacity handle retries
-    except (openai.APIConnectionError, openai.APITimeoutError) as e:
+    except (openai.APIConnectionError, openai.APITimeoutError):
         logging.warning(f"Connection/timeout error for '{source_name}', retrying...")
         raise  # Let tenacity handle retries
     except openai.AuthenticationError as e:
@@ -63,19 +63,18 @@ def _make_openai_request(client: openai.OpenAI, messages: List[Dict], source_nam
 def summarize(text: str, source_name: str, source_url: str, openai_api_key: str) -> str:
     """
     Summarize text using OpenAI with caching and retry logic.
-    
+
     Args:
         text: Content to summarize
         source_name: Name of the source
         source_url: URL of the source
         openai_api_key: OpenAI API key
-        
+
     Returns:
         Summarized text or error message
     """
     # Truncate text for prompt to stay within token limits
     effective_text = text[:8000]
-    
     # Check cache first
     content_hash = _content_hash(effective_text)
     cache_key = f"{content_hash}_{source_name}"
@@ -94,7 +93,6 @@ def summarize(text: str, source_name: str, source_url: str, openai_api_key: str)
         "and end with a useful takeaway.\n"
         "Use 3–4 short, data-rich sentences. Avoid fluff."
     )
-    
     messages = [
         {
             "role": "system",
@@ -110,23 +108,21 @@ def summarize(text: str, source_name: str, source_url: str, openai_api_key: str)
         },
         {"role": "user", "content": prompt}
     ]
-    
     try:
         client = get_openai_client(openai_api_key)
         result = _make_openai_request(client, messages, source_name)
-        
+
         # Cache the result
         _summary_cache[cache_key] = result
-        
+
         # Limit cache size to prevent memory issues
         if len(_summary_cache) > 1000:
             # Remove oldest 100 entries
             keys_to_remove = list(_summary_cache.keys())[:100]
             for key in keys_to_remove:
                 del _summary_cache[key]
-        
+
         return result
-        
     except openai.AuthenticationError:
         return f"[Summary unavailable for {source_name} - OpenAI Authentication Error]"
     except openai.InvalidRequestError:
@@ -139,24 +135,22 @@ def summarize(text: str, source_name: str, source_url: str, openai_api_key: str)
 def summarize_concurrent(items: List[Tuple[str, str, str]], openai_api_key: str, max_workers: int = 5) -> List[Tuple[str, str, str]]:
     """
     Summarize multiple items concurrently with controlled concurrency.
-    
+
     Args:
         items: List of (text, source_name, source_url) tuples
         openai_api_key: OpenAI API key
         max_workers: Maximum concurrent OpenAI requests
-        
+
     Returns:
         List of (summary, source_name, source_url) tuples
     """
     results = []
-    
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         # Submit all tasks
         future_to_item = {
             executor.submit(summarize, text, source_name, source_url, openai_api_key): (source_name, source_url)
             for text, source_name, source_url in items
         }
-        
         # Process completed tasks
         for future in as_completed(future_to_item):
             source_name, source_url = future_to_item[future]
@@ -167,42 +161,37 @@ def summarize_concurrent(items: List[Tuple[str, str, str]], openai_api_key: str,
             except Exception as e:
                 logging.error(f"Summary failed for {source_name}: {e}")
                 results.append((f"[Summary unavailable for {source_name}]", source_name, source_url))
-    
     return results
 
 
 def batch_summarize(items: List[Tuple[str, str, str]], openai_api_key: str, batch_size: int = 3) -> List[str]:
     """
     Batch multiple articles into single OpenAI requests for efficiency.
-    
+
     Args:
         items: List of (text, source_name, source_url) tuples
         openai_api_key: OpenAI API key
         batch_size: Number of articles per batch request
-        
+
     Returns:
         List of summary strings
     """
     client = get_openai_client(openai_api_key)
     summaries = []
-    
     # Process items in batches
     for i in range(0, len(items), batch_size):
         batch = items[i:i + batch_size]
-        
         # Create batch prompt
         batch_content = "\n\n---ARTICLE SEPARATOR---\n\n".join([
             f"ARTICLE {idx + 1}:\nSource: {source_name} ({source_url})\nContent: {text[:4000]}"
             for idx, (text, source_name, source_url) in enumerate(batch)
         ])
-        
         batch_prompt = (
             f"Summarize these {len(batch)} articles in Paul Duvall's style. "
             "For each article, provide a 2-3 sentence summary with appropriate emoji tags. "
             "Format: 'SUMMARY X: [content]' where X is the article number.\n\n"
             f"{batch_content}"
         )
-        
         try:
             response = client.chat.completions.create(
                 model="gpt-4o",
@@ -216,10 +205,9 @@ def batch_summarize(items: List[Tuple[str, str, str]], openai_api_key: str, batc
                 max_tokens=800,  # More tokens for multiple summaries
                 temperature=0.7
             )
-            
+
             # Parse batch response
             batch_result = response.choices[0].message.content.strip()
-            
             # Split summaries (simple parsing - could be improved)
             batch_summaries = []
             for idx in range(len(batch)):
@@ -232,14 +220,12 @@ def batch_summarize(items: List[Tuple[str, str, str]], openai_api_key: str, batc
                     batch_summaries.append(summary)
                 else:
                     batch_summaries.append(f"[Summary unavailable for article {idx + 1}]")
-            
+
             summaries.extend(batch_summaries)
-            
         except Exception as e:
             logging.error(f"Batch summarization failed: {e}")
             # Fallback to individual summaries
             for text, source_name, source_url in batch:
                 summary = summarize(text, source_name, source_url, openai_api_key)
                 summaries.append(summary)
-    
     return summaries
