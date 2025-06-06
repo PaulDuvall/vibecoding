@@ -46,16 +46,17 @@ setup_env() {
     pip install -r requirements.txt
     
     # Install development dependencies
-    pip install pytest pytest-mock flake8
+    pip install pytest pytest-mock flake8 pytest-cov
     
     echo -e "${GREEN}✓ Development environment is ready!${NC}"
 }
 
 # Function to run tests
 run_tests() {
-    echo -e "${GREEN}Running tests...${NC}"
+    echo -e "${GREEN}Running tests with coverage...${NC}"
     source .venv/bin/activate
-    PYTHONPATH=$PYTHONPATH:$(pwd) pytest -v tests/
+    PYTHONPATH=$PYTHONPATH:$(pwd) pytest -v --cov=src --cov-report=html --cov-report=term tests/
+    echo -e "${GREEN}✓ Coverage report generated in htmlcov/index.html${NC}"
 }
 
 # Function to run linting

@@ -1,18 +1,18 @@
 import sys
 import os
 
-# Ensure the scripts directory is in the path BEFORE importing aws_blog_search
-_project_root_scripts_path = os.path.abspath(
+# Ensure the project root is in the path BEFORE importing aws_blog_search
+_project_root_path = os.path.abspath(
     os.path.join(
         os.path.dirname(__file__),
-        '../.github/scripts'
+        '..'
     )
 )
-if _project_root_scripts_path not in sys.path:
-    sys.path.insert(0, _project_root_scripts_path)
+if _project_root_path not in sys.path:
+    sys.path.insert(0, _project_root_path)
 import unittest
 from unittest.mock import patch, MagicMock
-from aws_blog_search import _is_query_match, fetch_aws_blog_posts
+from src.aws_blog_search import _is_query_match, fetch_aws_blog_posts
 
 class FeedEntry(dict):
     def __getattr__(self, name):
@@ -65,8 +65,8 @@ class TestAwsBlogSearch(unittest.TestCase):
             )
         )
 
-    @patch('aws_blog_search.feedparser.parse')
-    @patch('aws_blog_search._is_query_match')
+    @patch('src.aws_blog_search.feedparser.parse')
+    @patch('src.aws_blog_search._is_query_match')
     def test_fetch_aws_blog_posts_default_queries(self, mock_is_query_match,
                                                   mock_parse):
         # Simulate feed entries
@@ -126,8 +126,8 @@ class TestAwsBlogSearch(unittest.TestCase):
             "agentic coding"
         )
 
-    @patch('aws_blog_search.feedparser.parse')
-    @patch('aws_blog_search._is_query_match')
+    @patch('src.aws_blog_search.feedparser.parse')
+    @patch('src.aws_blog_search._is_query_match')
     def test_fetch_aws_blog_posts_provided_queries_and_max_results(
         self, mock_is_query_match, mock_parse
     ):
@@ -201,8 +201,8 @@ class TestAwsBlogSearch(unittest.TestCase):
             "codewhisperer"
         )
 
-    @patch('aws_blog_search.feedparser.parse')
-    @patch('aws_blog_search._is_query_match')
+    @patch('src.aws_blog_search.feedparser.parse')
+    @patch('src.aws_blog_search._is_query_match')
     def test_fetch_aws_blog_posts_max_results_logic(self, mock_is_query_match,
                                                     mock_parse):
         # Create more entries than max_results_per_query to test limiting
@@ -245,8 +245,8 @@ class TestAwsBlogSearch(unittest.TestCase):
         self.assertEqual(results[0]['title'], "Post 0")
         self.assertEqual(results[1]['title'], "Post 1")
 
-    @patch('aws_blog_search.feedparser.parse')
-    @patch('aws_blog_search._is_query_match')
+    @patch('src.aws_blog_search.feedparser.parse')
+    @patch('src.aws_blog_search._is_query_match')
     def test_fetch_aws_blog_posts_always_include_queries_are_added(
             self, mock_is_query_match, mock_parse):
         mock_entry_base = FeedEntry({

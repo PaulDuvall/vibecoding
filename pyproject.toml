@@ -1,0 +1,87 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vibecoding-digest"
+version = "1.0.0"
+description = "Automated content aggregation and summarization tool for AI and developer tools"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Paul Duvall"}
+]
+keywords = ["ai", "digest", "automation", "rss", "summarization"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Software Development :: Tools",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: News/Diary",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "feedparser>=6.0.0",
+    "openai>=1.0.0",
+    "requests>=2.28.0",
+    "tenacity>=8.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-mock>=3.10.0",
+    "flake8>=6.0.0",
+    "pytest-cov>=4.0.0",
+]
+test = [
+    "pytest>=7.0.0",
+    "pytest-mock>=3.10.0",
+    "pytest-cov>=4.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/PaulDuvall/vibecoding"
+Repository = "https://github.com/PaulDuvall/vibecoding.git"
+Issues = "https://github.com/PaulDuvall/vibecoding/issues"
+
+[project.scripts]
+vibe-digest = "src.vibe_digest:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.setuptools.package-dir]
+"" = "."
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "--verbose --tb=short"
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["tests/*", "setup.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+]
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]
+exclude = [".git", "__pycache__", "dist", "build", "*.egg-info"]

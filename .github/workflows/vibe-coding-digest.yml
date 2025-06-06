@@ -41,10 +41,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Run Tests and Linting
+        run: |
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          flake8 src/
+          pytest -v --cov=src tests/
+
       - name: Run Digest Script
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
-        run: python .github/scripts/vibe_digest.py
+        run: |
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          python -m src.vibe_digest

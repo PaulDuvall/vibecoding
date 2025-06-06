@@ -8,13 +8,13 @@ from unittest.mock import patch, MagicMock
 
 import pytest
 
-# Add the .github/scripts directory to the path so we can import vibe_digest
+# Add the project root to the path so we can import vibe_digest
 sys.path.append(os.path.join(
-    os.path.dirname(__file__), '..', '.github', 'scripts'
+    os.path.dirname(__file__), '..'
 ))
 
 # Import the module to test
-import vibe_digest  # noqa: E402
+from src import vibe_digest  # noqa: E402
 
 
 def test_fetch_feed_items():
@@ -24,7 +24,7 @@ def test_fetch_feed_items():
     and returns the expected number of items with the correct structure.
     """
     with patch('feedparser.parse') as mock_parse, \
-         patch('vibe_digest.feedparser.http') as mock_http:
+         patch('src.vibe_digest.feedparser.http') as mock_http:
         # Mock the feedparser response
         mock_feed = MagicMock()
         mock_feed.entries = [
@@ -65,7 +65,7 @@ def test_summarize():
     This test verifies that the summarize function correctly processes input
     text and returns the expected summary from the mock OpenAI API.
     """
-    with patch('vibe_digest.summarize',
+    with patch('src.vibe_digest.summarize',
                return_value="This is a test summary.") as mock_summarize:
         with patch.dict(
             'os.environ',
@@ -93,7 +93,7 @@ def test_format_digest():
     HTML structure with the current date and provided summaries.
     """
     # Mock datetime to ensure consistent test output
-    with patch('vibe_digest.datetime') as mock_datetime:
+    with patch('src.vibe_digest.datetime') as mock_datetime:
         test_date = datetime(2023, 1, 1)
         mock_datetime.now.return_value = test_date
 
@@ -171,22 +171,22 @@ def test_main(monkeypatch):
 
     with (
         patch(
-            'vibe_digest.fetch_all_feed_items_concurrently',
+            'src.vibe_digest.fetch_all_feed_items_concurrently',
             return_value=test_items
         ) as mock_fetch,
         patch(
-            'vibe_digest.summarize',
+            'src.vibe_digest.summarize',
             return_value="Test Summary"
         ) as mock_summarize,
         patch(
-            'vibe_digest.format_digest',
+            'src.vibe_digest.format_digest',
             return_value=("<html>Test Digest</html>", "<md>Test Digest</md>")
         ) as mock_format,
         patch(
-            'vibe_digest.send_email'
+            'src.vibe_digest.send_email'
         ) as mock_send,
-        patch('vibe_digest.fetch_aws_blog_posts', return_value=[]),
-        patch('vibe_digest.fetch_claude_release_notes_scraper', return_value=[]),
+        patch('src.vibe_digest.fetch_aws_blog_posts', return_value=[]),
+        patch('src.vibe_digest.fetch_claude_release_notes_scraper', return_value=[]),
         patch.dict('os.environ', {
             'OPENAI_API_KEY': 'valid-key',
             'EMAIL_TO': 'to@example.com',
