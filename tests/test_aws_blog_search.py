@@ -1,5 +1,7 @@
-import sys
 import os
+import sys
+import unittest
+from unittest.mock import patch, MagicMock
 
 # Ensure the project root is in the path BEFORE importing aws_blog_search
 _project_root_path = os.path.abspath(
@@ -10,8 +12,7 @@ _project_root_path = os.path.abspath(
 )
 if _project_root_path not in sys.path:
     sys.path.insert(0, _project_root_path)
-import unittest
-from unittest.mock import patch, MagicMock
+
 from src.aws_blog_search import _is_query_match, fetch_aws_blog_posts
 
 class FeedEntry(dict):

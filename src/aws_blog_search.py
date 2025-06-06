@@ -1,7 +1,7 @@
+import re
 import feedparser
 
 
-import re
 
 def _is_query_match(text, query):
     """
@@ -18,8 +18,10 @@ def _is_query_match(text, query):
         return re.search(pattern, text_lower) is not None
     else:
         # Multi-word: match if all words are present, regardless of order
-        return all(re.search(r'\b{}\b'.format(re.escape(word)), text_lower) for word in words)
-
+        return all(
+            re.search(r'\b{}\b'.format(re.escape(word)), text_lower)
+            for word in words
+        )
 
 
 def fetch_aws_blog_posts(base_queries=None, max_results_per_query=3):
