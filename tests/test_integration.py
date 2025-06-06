@@ -20,7 +20,7 @@ class TestDigestIntegration:
     """Integration tests for the complete digest pipeline."""
 
     @patch('src.vibe_digest.send_email')
-    @patch('src.vibe_digest.summarize')
+    @patch('src.vibe_digest.summarize_concurrent')
     @patch('src.vibe_digest.fetch_all_feed_items_concurrently')
     @patch('src.vibe_digest.fetch_aws_blog_posts')
     @patch.dict('os.environ', {
@@ -57,7 +57,11 @@ class TestDigestIntegration:
         # Configure mocks
         mock_feed_fetch.return_value = test_items
         mock_aws_fetch.return_value = []
-        mock_summarize.return_value = "Mocked summary content"
+        # Mock concurrent summarization to return tuples as expected
+        mock_summarize.return_value = [
+            ("Mocked summary 1", "Test Source 1", "https://example.com/1"),
+            ("Mocked summary 2", "Test Source 2", "https://example.com/2")
+        ]
         mock_send_email.return_value = None
         
         # Run the main digest function
@@ -65,11 +69,20 @@ class TestDigestIntegration:
         
         # Verify the pipeline executed correctly
         mock_feed_fetch.assert_called_once()
-        assert mock_summarize.call_count == len(test_items)
+        mock_summarize.assert_called_once()
         mock_send_email.assert_called_once()
         
-        # Verify summarize was called with correct parameters
-        for item in test_items:
+        # Verify summarize_concurrent was called with list of tuples
+        call_args = mock_summarize.call_args[0]
+        items_for_summarization = call_args[0]
+        api_key = call_args[1]
+        
+        assert len(items_for_summarization) == len(test_items)
+        assert api_key == 'test-key'
+        
+        # Verify the items were properly formatted for summarization
+        for idx, (text, source_name, source_url) in enumerate(items_for_summarization):
+            item = test_items[idx]
             expected_text = (
                 f"Title: {item.title}\n"
                 f"Link: {item.link}\n"
@@ -78,12 +91,9 @@ class TestDigestIntegration:
                 f"Author: {item.author or 'N/A'}\n"
                 f"Content: {item.summary}"
             )
-            mock_summarize.assert_any_call(
-                expected_text,
-                item.source_name,
-                item.link,
-                'test-key'
-            )
+            assert text == expected_text
+            assert source_name == item.source_name
+            assert source_url == item.link
 
     @patch.dict('os.environ', {}, clear=True)
     def test_environment_validation_fails(self):

@@ -175,8 +175,8 @@ def test_main(monkeypatch):
             return_value=test_items
         ) as mock_fetch,
         patch(
-            'src.vibe_digest.summarize',
-            return_value="Test Summary"
+            'src.vibe_digest.summarize_concurrent',
+            return_value=[("Test Summary", "Test Source", "http://example.com")] * 2
         ) as mock_summarize,
         patch(
             'src.vibe_digest.format_digest',
@@ -200,8 +200,8 @@ def test_main(monkeypatch):
 
         # Assert the function calls
         mock_fetch.assert_called_once()
-        # Check at least one call for each test item
-        assert mock_summarize.call_count >= len(test_items)
+        # Check that summarize_concurrent was called once (not per item)
+        mock_summarize.assert_called_once()
         actual_args, _ = mock_format.call_args
         assert "Test Source" in actual_args[0]
         assert actual_args[0]["Test Source"] == ["Test Summary"] * len(test_items)
