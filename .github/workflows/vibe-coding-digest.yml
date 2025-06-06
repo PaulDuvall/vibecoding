@@ -46,6 +46,11 @@ jobs:
           export PYTHONPATH=$PYTHONPATH:$(pwd)
           flake8 src/
           pytest -v --cov=src tests/
+          
+      - name: Run Acceptance Tests
+        run: |
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          pytest -v tests/test_acceptance.py -k "not test_complete_daily_digest_workflow_execution"
 
       - name: Run Digest Script
         env:

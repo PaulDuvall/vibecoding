@@ -17,21 +17,28 @@ This project uses **Windsurf** to manage and automate development standards, wor
 **Vibe Digest** is an automated content aggregation and summarization tool that delivers curated, daily email digests of the most relevant developments in AI, developer tools, and emerging technology. See [`docs/prd.md`](docs/prd.md) for the Product Requirements Document (PRD), goals, and acceptance criteria.
 
 ### Key Features
-- Aggregates RSS feeds from multiple sources
-- Summarizes content using OpenAI's API
-- Formats and sends a daily HTML digest via SendGrid
-- Designed for tech founders, engineers, and AI practitioners
+- **RSS Feed Aggregation**: Fetches content from 25+ sources including Google Alerts, HackerNews, Reddit, YouTube, GitHub, OpenAI, Anthropic, and AWS blogs
+- **AI-Powered Summarization**: Uses OpenAI GPT-4o to create concise, contextual summaries in Paul Duvall's voice
+- **Email Delivery**: Sends mobile-optimized HTML digests daily via SendGrid
+- **AWS Blog Search**: Targeted search functionality for AWS-specific content with query matching
+- **Error Resilience**: Comprehensive retry logic and graceful degradation when services fail
+- **Content Deduplication**: Intelligent removal of duplicate articles across sources
+- **Acceptance Test Coverage**: Full ATDD implementation with feature specifications and end-to-end testing
 
 ### Quality & CI/CD Workflow
 - **Linting:** Enforced via Flake8 (`./run.sh lint`)
-- **Testing:** Comprehensive pytest suite (`./run.sh test`)
+- **Testing:** Comprehensive pytest suite with coverage reporting (`./run.sh test`)
+- **Acceptance Testing:** ATDD implementation with Gherkin feature specifications and end-to-end tests
 - **CI/CD:** Automated with GitHub Actions ([`.github/workflows/vibe-coding-digest.yml`](.github/workflows/vibe-coding-digest.yml))
 - **Secrets Scanning:** Enforced via Gitleaks in GitHub Actions (see `.github/workflows/vibe-coding-digest.yml`, per `.cicdrules.md`)
 - **All code and tests are PEP 8 compliant** as of the latest update
 - **Traceability:**
-  - Implementation: [`.github/scripts/vibe_digest.py`](.github/scripts/vibe_digest.py)
+  - Implementation: [`src/`](src/) (modular package structure)
+  - Unit Tests: [`tests/test_vibe_digest.py`](tests/test_vibe_digest.py), [`tests/test_aws_blog_search.py`](tests/test_aws_blog_search.py)
+  - Integration Tests: [`tests/test_integration.py`](tests/test_integration.py)
+  - Acceptance Tests: [`tests/test_acceptance.py`](tests/test_acceptance.py)
+  - Feature Specifications: [`tests/features/digest_workflow.feature`](tests/features/digest_workflow.feature)
   - CI/CD Security: [`.github/workflows/vibe-coding-digest.yml`](.github/workflows/vibe-coding-digest.yml) (Gitleaks secrets scanning)
-  - Tests: [`tests/test_vibe_digest.py`](tests/test_vibe_digest.py)
   - Product requirements: [`docs/prd.md`](docs/prd.md)
 
 ### Required Secrets for Deployment
@@ -76,13 +83,37 @@ Set the following secrets in your GitHub repository for the workflow to function
 ---
 
 ### Running Locally
-```bash
-# Run linting
-./run.sh lint
 
-# Run tests
-./run.sh test
+#### Development Setup
+```bash
+# Setup Python environment and dependencies
+./run.sh setup
+
+# Run all quality checks (lint + test + coverage)
+./run.sh all
+
+# Individual operations
+./run.sh lint    # Flake8 linting
+./run.sh test    # Tests with coverage reporting  
+./run.sh clean   # Environment cleanup
 ```
+
+#### Running the Digest
+```bash
+# As module (development)
+export PYTHONPATH=$PYTHONPATH:$(pwd)
+python -m src.vibe_digest
+
+# Via package installation
+pip install -e .
+vibe-digest
+```
+
+#### Test Categories
+- **Unit Tests**: Individual component testing with mocks (`test_vibe_digest.py`, `test_aws_blog_search.py`)
+- **Integration Tests**: End-to-end pipeline validation (`test_integration.py`) 
+- **Acceptance Tests**: ATDD scenarios with feature specifications (`test_acceptance.py`)
+- **Coverage Reports**: HTML reports generated in `htmlcov/` directory
 
 ---
 
