@@ -12,7 +12,8 @@ from typing import List, Dict
 import feedparser
 from tenacity import retry, stop_after_attempt, wait_exponential
 
-from src.feeds import FEED_SOURCES, FEEDS, fetch_all_feed_items_concurrently
+from src.feeds import fetch_all_feed_items_concurrently
+from src.config_loader import load_feed_configuration
 from src.models import DigestItem
 from src.summarize import summarize, summarize_concurrent, batch_summarize
 from src.email_utils import send_email
@@ -47,7 +48,9 @@ def fetch_single_feed(url):
         logging.warning(f"Retriable parse error for {url}: {feed.bozo_exception}")
         raise Exception("Retriable feed parse error")
 
-    source_name = FEED_SOURCES.get(url, "Unknown Source")
+    # Get source mapping from configuration
+    _, source_mapping = load_feed_configuration()
+    source_name = source_mapping.get(url, "Unknown Source")
     for entry in feed.entries[:3]:
         link = getattr(entry, "link", None) or entry.get("feedburner_origlink")
         if not link:
@@ -118,7 +121,10 @@ def validate_environment():
 
 
 def gather_feed_items():
-    return fetch_all_feed_items_concurrently(FEEDS)
+    """Load feeds from external configuration and fetch items."""
+    feed_urls, _ = load_feed_configuration()
+    logging.info(f"Loading {len(feed_urls)} feeds from configuration")
+    return fetch_all_feed_items_concurrently(feed_urls)
 
 
 def add_aws_blog_posts(all_items):

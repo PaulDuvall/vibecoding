@@ -42,21 +42,18 @@ def test_fetch_feed_items():
         mock_parse.return_value = mock_feed
         mock_http.FeedHttpError = Exception  # Mock the error class
 
-        # Patch FEEDS to a single URL for isolation
-        original_feeds = vibe_digest.FEEDS
-        vibe_digest.FEEDS = ["http://dummy.url"]
-        try:
-            # Call the function
-            items = vibe_digest.fetch_all_feed_items_concurrently(vibe_digest.FEEDS)
+        # Test with a single URL for isolation
+        test_feeds = ["http://dummy.url"]
+        
+        # Call the function
+        items = vibe_digest.fetch_all_feed_items_concurrently(test_feeds)
 
-            # Assert the results
-            assert len(items) == 2
-            assert items[0].title == "Test Title 1"
-            assert items[1].title == "Test Title 2"
-            # Assert the mock_parse call count (should be 1)
-            assert mock_parse.call_count == 1
-        finally:
-            vibe_digest.FEEDS = original_feeds
+        # Assert the results
+        assert len(items) == 2
+        assert items[0].title == "Test Title 1"
+        assert items[1].title == "Test Title 2"
+        # Assert the mock_parse call count (should be 1)
+        assert mock_parse.call_count == 1
 
 
 def test_summarize():
