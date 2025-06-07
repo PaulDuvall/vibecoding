@@ -83,5 +83,16 @@ exclude_lines = [
 
 [tool.flake8]
 max-line-length = 88
-extend-ignore = ["E203", "W503"]
-exclude = [".git", "__pycache__", "dist", "build", "*.egg-info"]
+# Ignore low-priority style issues that don't affect functionality
+extend-ignore = [
+    "E203",  # Whitespace before colon (conflicts with Black)
+    "W503",  # Line break before binary operator (PEP 8 preferred)  
+    "W504",  # Line break after binary operator (mutually exclusive with W503)
+    "W291",  # Trailing whitespace (cosmetic)
+    "W292",  # No newline at end of file (cosmetic)
+    "W293",  # Blank line contains whitespace (cosmetic)
+    "W391",  # Blank line at end of file (cosmetic)
+    "E241",  # Multiple spaces after comma (cosmetic)
+    "E221",  # Multiple spaces before operator (cosmetic)
+]
+exclude = [".git", "__pycache__", "dist", "build", "*.egg-info", "venv"]
