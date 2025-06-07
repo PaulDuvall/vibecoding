@@ -226,7 +226,7 @@
       "url": "https://github.com/Aider-AI/aider/releases.atom",
       "source_name": "GitHub Releases: Aider",
       "category": "DevTools",
-      "enabled": true
+      "enabled": false
     },
     {
       "url": "https://github.com/continuedev/continue/releases.atom",
@@ -250,6 +250,78 @@
       "url": "https://huggingface.co/blog/feed.xml",
       "source_name": "Hugging Face Blog",
       "category": "AI",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=AI+pair+programming&points=30",
+      "source_name": "Hacker News: AI Pair Programming",
+      "category": "AI Tools",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=autonomous+software+engineer&points=25",
+      "source_name": "Hacker News: Autonomous Software Engineer",
+      "category": "AI Tools",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=AI+coding+agents&points=25",
+      "source_name": "Hacker News: AI Coding Agents",
+      "category": "AI Tools",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=devin+ai&points=20",
+      "source_name": "Hacker News: Devin AI",
+      "category": "AI Tools",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=aider+pair+programming&points=20",
+      "source_name": "Hacker News: Aider Pair Programming",
+      "category": "AI Tools",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=CodeGPT&points=20",
+      "source_name": "Hacker News: CodeGPT",
+      "category": "AI Tools",
+      "enabled": true
+    },
+    {
+      "url": "https://www.reddit.com/r/ChatGPTCoding/.rss",
+      "source_name": "Reddit: ChatGPT Coding",
+      "category": "Community",
+      "enabled": true
+    },
+    {
+      "url": "https://www.reddit.com/search.rss?q=AI+pair+programming&sort=hot",
+      "source_name": "Reddit: AI Pair Programming",
+      "category": "Community",
+      "enabled": true
+    },
+    {
+      "url": "https://www.reddit.com/search.rss?q=autonomous+software+engineer&sort=hot",
+      "source_name": "Reddit: Autonomous Software Engineer",
+      "category": "Community",
+      "enabled": true
+    },
+    {
+      "url": "https://github.com/paul-gauthier/aider/releases.atom",
+      "source_name": "GitHub: Aider Releases (Paul Gauthier)",
+      "category": "AI Tools",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=amazon+kiro&points=15",
+      "source_name": "Hacker News: Amazon Kiro",
+      "category": "AI Tools",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=openai+custom+agents&points=20",
+      "source_name": "Hacker News: OpenAI Custom Agents",
+      "category": "AI Tools",
       "enabled": true
     }
   ]

@@ -34,7 +34,33 @@ AI_ENGINEERING_QUERIES = [
     
     # Specific Models & Providers
     "gpt-4", "claude 3", "llama 3", "deepseek", "gemini",
-    "mistral", "qwen", "phi-3", "command r", "grok"
+    "mistral", "qwen", "phi-3", "command r", "grok",
+    
+    # Curated High-Signal Agent Coding Terms
+    "AI coding agents", "software development agents", "AI pair programmer",
+    "autonomous coding agents", "AI programming assistant", "agentic software",
+    "AI developer bots", "AI-powered code agents", "autonomous dev agents",
+    
+    # Coding with AI Terms
+    "AI-assisted development", "copilot coding", "AI code generation",
+    "prompt-based programming", "LLM coding", "generative coding",
+    "AI-enhanced development", "natural language programming", "coding with language models",
+    
+    # Autonomous Software Engineering
+    "self-coding AI", "autonomous programming", "end-to-end code generation",
+    "AI-led development", "agentic software engineering", "closed-loop AI development",
+    "autonomous software agents", "full-stack AI engineering", "intelligent code orchestration",
+    
+    # Autonomous Software Agents
+    "AI dev agents", "software agents with reasoning", "agent-based software engineering",
+    "autonomous developer agents", "multi-agent software systems", "LLM-powered agents",
+    "self-directed AI agents", "cognitive software agents", "tool-using AI agents",
+    "AI software builders",
+    
+    # High-Volume/Trending Terms
+    "GPT engineering", "AI IDEs", "agentic workflows", "small language models",
+    "AI copilots for developers", "code synthesis from prompts", "software 2.0",
+    "prompt engineering for development", "reasoning agents", "autonomous IDEs"
 ]
 
 

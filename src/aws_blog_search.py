@@ -43,7 +43,15 @@ def fetch_aws_blog_posts(base_queries=None, max_results_per_query=3):
         "prompt engineering", "generative AI", "foundation models",
         "bedrock", "claude", "anthropic", "machine learning operations",
         "MLOps", "LLMOps", "model deployment", "AI assistant",
-        "copilot", "code generation", "automated coding"
+        "copilot", "code generation", "automated coding",
+        # Curated high-signal terms
+        "AI coding agents", "AI pair programmer", "autonomous coding agents",
+        "AI-assisted development", "copilot coding", "AI code generation",
+        "autonomous programming", "agentic workflows", "AI IDEs",
+        "GPT engineering", "reasoning agents", "multi-agent software",
+        "self-coding AI", "agentic software engineering", "AI dev agents",
+        "software agents with reasoning", "autonomous developer agents",
+        "cognitive software agents", "tool-using AI agents"
     ]
     rss_url = "https://aws.amazon.com/blogs/aws/feed/"
     feed = feedparser.parse(rss_url)
