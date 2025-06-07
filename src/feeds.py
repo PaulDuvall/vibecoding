@@ -5,7 +5,9 @@ import logging
 import feedparser
 from concurrent.futures import ThreadPoolExecutor
 from tenacity import retry, wait_exponential, stop_after_attempt
+from typing import List, Dict, Optional
 from src.models import DigestItem
+from src.config_loader import load_feed_configuration
 
 # Feed URLs
 FEEDS = [
@@ -181,11 +183,38 @@ def fetch_single_feed(url):
     return digest_items
 
 
-def fetch_all_feed_items_concurrently(feeds_list):
-    """Fetches items from all RSS feeds concurrently."""
+def fetch_all_feed_items_concurrently(feeds_list: Optional[List[str]] = None, 
+                                      source_mapping: Optional[Dict[str, str]] = None):
+    """
+    Fetches items from all RSS feeds concurrently.
+    
+    Args:
+        feeds_list: Optional list of feed URLs. If None, loads from external config or defaults.
+        source_mapping: Optional mapping from URL to source name. If None, loads from config.
+    
+    Returns:
+        List of DigestItem objects from all feeds.
+    """
+    # Load external configuration if no explicit feeds provided
+    if feeds_list is None or source_mapping is None:
+        config_feeds, config_sources = load_feed_configuration()
+        feeds_list = feeds_list or config_feeds
+        source_mapping = source_mapping or config_sources
+    
     all_items = []
     with ThreadPoolExecutor(max_workers=5) as executor:
         results = list(executor.map(fetch_single_feed, feeds_list))
         for items_from_feed in results:
             all_items.extend(items_from_feed)
     return all_items
+
+
+def get_configured_feeds() -> tuple[List[str], Dict[str, str]]:
+    """
+    Get the configured feeds and source mapping.
+    Loads from external configuration if available, otherwise uses defaults.
+    
+    Returns:
+        Tuple of (feed_urls, source_mapping)
+    """
+    return load_feed_configuration()

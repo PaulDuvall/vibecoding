@@ -10,3 +10,4 @@ tenacity
 tiktoken
 aiohttp
 asyncio
+pyyaml

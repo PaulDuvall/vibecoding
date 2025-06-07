@@ -227,12 +227,107 @@ This document defines user stories for the AI Engineering platform, derived from
 
 ---
 
+## US-301: Externalize Feed Configuration for Easy Management
+**As** a content curator or system administrator,
+**I want** to configure RSS feeds through external JSON or YAML files instead of hardcoded lists,
+**so that** I can easily add, remove, or modify feed sources without changing source code.
+
+**Acceptance Criteria:**
+- System supports external configuration files in JSON and YAML formats
+- Configuration files include feed URL, source name, category, and enabled/disabled status
+- System falls back to hardcoded feeds when no external configuration exists
+- Configuration validation prevents malformed files from breaking the system
+
+**Test Coverage:**
+- ATDD scenarios verify external configuration loading with valid JSON/YAML files
+- Tests validate fallback behavior when configuration files are missing or malformed
+- Scenarios ensure disabled feeds are properly excluded from processing
+
+---
+
+## US-302: Support Environment-Based Configuration Paths
+**As** a deployment engineer,
+**I want** to specify custom configuration file paths via environment variables,
+**so that** I can deploy different feed configurations across environments (dev, staging, prod).
+
+**Acceptance Criteria:**
+- `VIBE_CONFIG_PATH` environment variable overrides default configuration file locations
+- System searches for configuration files in multiple default locations
+- Custom paths support both absolute and relative file paths
+- Clear error messages when specified configuration files cannot be found
+
+**Test Coverage:**
+- ATDD scenarios verify environment variable configuration path loading
+- Tests validate behavior with valid and invalid custom paths
+- Scenarios ensure proper error handling for missing custom configuration files
+
+---
+
+## US-303: Categorize and Enable/Disable Individual Feeds
+**As** a content curator,
+**I want** to organize feeds by category and selectively enable or disable them,
+**so that** I can control content sources without removing them from the configuration.
+
+**Acceptance Criteria:**
+- Feed configuration supports categorization (AI, DevTools, Community, YouTube, Blogs)
+- Individual feeds can be enabled or disabled via configuration
+- System processes only enabled feeds during digest generation
+- Categories provide organizational structure for large feed lists
+
+**Test Coverage:**
+- ATDD scenarios verify category-based feed organization
+- Tests validate that disabled feeds are excluded from processing
+- Scenarios ensure enabled feeds from all categories are processed correctly
+
+---
+
+## US-304: Maintain Backward Compatibility with Hardcoded Feeds
+**As** a system maintainer,
+**I want** the external configuration system to work seamlessly with existing hardcoded feed lists,
+**so that** the system continues to function without any configuration changes.
+
+**Acceptance Criteria:**
+- System works identically to before when no external configuration exists
+- All existing hardcoded feeds are processed with their original source names
+- No breaking changes to existing API or behavior
+- Smooth migration path from hardcoded to external configuration
+
+**Test Coverage:**
+- ATDD scenarios verify identical behavior with and without external configuration
+- Tests validate that all existing feeds continue to work
+- Scenarios ensure existing source name mappings remain intact
+
+---
+
+## US-305: Validate Configuration File Format and Provide Clear Error Messages
+**As** a system administrator,
+**I want** the system to validate configuration files and provide clear error messages for issues,
+**so that** I can quickly identify and fix configuration problems.
+
+**Acceptance Criteria:**
+- System validates required fields (url, source_name) in configuration files
+- Clear error messages indicate specific validation failures and their locations
+- Malformed JSON/YAML files are handled gracefully with helpful error messages
+- Configuration validation prevents system crashes from bad configuration data
+
+**Test Coverage:**
+- ATDD scenarios verify validation error handling for various malformed configurations
+- Tests validate specific error messages for missing required fields
+- Scenarios ensure system graceful degradation when configuration validation fails
+
+---
+
 ### Traceability Table
 
-| User Story | Implementation Files         | Test Files                   | Docs/Links                  |
-|------------|-----------------------------|------------------------------|-----------------------------|
-| US-201     | summarize.py, vibe_digest.py| tests/test_summarize.py      |                             |
-| US-202     | vibe_digest.py              | tests/test_vibe_digest.py    |                             |
-| US-203     | email_utils.py, vibe_digest.py| tests/test_email_utils.py   |                             |
-| US-204     | README.md, user_stories.md  | N/A                          | docs/user_stories.md        |
+| User Story | Implementation Files         | Test Files                   | ATDD Features               | Docs/Links                  |
+|------------|------------------------------|------------------------------|-----------------------------|-----------------------------|
+| US-201     | summarize.py, vibe_digest.py| tests/test_summarize.py      | N/A                         |                             |
+| US-202     | vibe_digest.py              | tests/test_vibe_digest.py    | N/A                         |                             |
+| US-203     | email_utils.py, vibe_digest.py| tests/test_email_utils.py   | N/A                         |                             |
+| US-204     | README.md, user_stories.md  | N/A                          | N/A                         | docs/user_stories.md        |
+| US-301     | config_loader.py, feeds.py  | tests/features/externalized_config.feature | Load external config, Fallback to defaults, Config validation | src/config_loader.py, src/feeds.py |
+| US-302     | config_loader.py            | tests/features/externalized_config.feature | Environment variable path loading | src/config_loader.py        |
+| US-303     | config_loader.py, feeds.py  | tests/features/externalized_config.feature | Category organization, Enable/disable feeds | feeds_config.json           |
+| US-304     | config_loader.py, feeds.py  | tests/features/externalized_config.feature | Backward compatibility scenario | src/feeds.py                |
+| US-305     | config_loader.py            | tests/features/externalized_config.feature | Configuration validation scenarios | src/config_loader.py        |
 
