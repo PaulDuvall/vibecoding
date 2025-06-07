@@ -7,3 +7,5 @@ openai
 requests
 tenacity
 tiktoken
+aiohttp
+asyncio

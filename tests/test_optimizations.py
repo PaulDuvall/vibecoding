@@ -3,13 +3,18 @@ Tests for OpenAI usage optimizations.
 """
 
 import os
+import time
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+import asyncio
+from unittest.mock import Mock, patch, MagicMock, AsyncMock
 from concurrent.futures import ThreadPoolExecutor
 
 from src.summarize import (
     summarize, summarize_concurrent, batch_summarize, 
-    get_openai_client, _content_hash, _summary_cache
+    get_openai_client, _content_hash, _summary_cache,
+    summarize_async, summarize_concurrent_async, 
+    batch_summarize_async, create_smart_batches,
+    get_performance_report, AdaptiveRateLimiter
 )
 
 
@@ -243,6 +248,137 @@ class TestOpenAIOptimizations(unittest.TestCase):
         # Concurrent processing should be reasonably fast
         self.assertLess(processing_time, 1.0)  # Should complete in under 1 second
         self.assertEqual(len(results), 5)
+
+    def test_smart_batching(self):
+        """Test that smart batching groups similar content."""
+        items = [
+            ("Content 1", "Source 1", "https://aws.amazon.com/blog/post1"),
+            ("Content 2", "Source 2", "https://aws.amazon.com/blog/post2"),
+            ("Content 3", "Source 3", "https://openai.com/blog/post1"),
+            ("Content 4", "Source 4", "https://openai.com/blog/post2"),
+        ]
+        
+        batches = create_smart_batches(items, batch_size=2)
+        
+        # Should group by domain
+        self.assertEqual(len(batches), 2)  # Two domains
+        
+        # Each batch should have items from same domain
+        for batch in batches:
+            domains = set(item[2].split('/')[2] for item in batch)  # Extract domain
+            self.assertEqual(len(domains), 1)  # All items in batch from same domain
+
+    def test_performance_monitor(self):
+        """Test performance monitoring functionality."""
+        report = get_performance_report()
+        
+        # Should return all expected metrics
+        expected_keys = [
+            'cache_hit_rate', 'avg_cost_per_summary', 'avg_tokens_per_summary',
+            'avg_latency_ms', 'error_rate', 'total_runtime', 
+            'total_api_calls', 'total_cost'
+        ]
+        
+        for key in expected_keys:
+            self.assertIn(key, report)
+
+    def test_adaptive_rate_limiter(self):
+        """Test adaptive rate limiting functionality."""
+        limiter = AdaptiveRateLimiter(base_rpm=60)
+        
+        # Test header updates
+        headers = {
+            'x-ratelimit-remaining': '45',
+            'x-ratelimit-reset': str(int(time.time()) + 3600)
+        }
+        
+        limiter.update_from_response_headers(headers)
+        # Test that headers are stored (the update is checked in acquire method)
+        self.assertEqual(limiter.last_headers, headers)
+
+    async def test_async_summarize(self):
+        """Test async summarization function."""
+        with patch('src.summarize.get_async_openai_client') as mock_client:
+            mock_openai_client = AsyncMock()
+            mock_client.return_value = mock_openai_client
+            
+            mock_response = Mock()
+            mock_response.choices = [Mock()]
+            mock_response.choices[0].message.content = "Async test summary"
+            mock_response.usage.prompt_tokens = 100
+            mock_response.usage.completion_tokens = 50
+            
+            mock_openai_client.chat.completions.create.return_value = mock_response
+            
+            result = await summarize_async(
+                "Test content", "Test Source", "https://example.com", "test-key"
+            )
+            
+            self.assertEqual(result, "Async test summary")
+            mock_openai_client.chat.completions.create.assert_called_once()
+
+    async def test_async_concurrent_summarization(self):
+        """Test async concurrent summarization."""
+        with patch('src.summarize.summarize_async') as mock_async_summarize:
+            mock_async_summarize.return_value = "Async summary"
+            
+            items = [
+                ("Content 1", "Source 1", "URL 1"),
+                ("Content 2", "Source 2", "URL 2"),
+                ("Content 3", "Source 3", "URL 3")
+            ]
+            
+            results = await summarize_concurrent_async(items, "test-key", max_concurrent=2)
+            
+            # Should process all items
+            self.assertEqual(len(results), 3)
+            self.assertEqual(mock_async_summarize.call_count, 3)
+            
+            # Verify results format
+            for summary, source_name, source_url in results:
+                self.assertEqual(summary, "Async summary")
+
+    async def test_async_batch_summarization(self):
+        """Test async batch summarization."""
+        with patch('src.summarize.get_async_openai_client') as mock_client:
+            mock_openai_client = AsyncMock()
+            mock_client.return_value = mock_openai_client
+            
+            mock_response = Mock()
+            mock_response.choices = [Mock()]
+            mock_response.choices[0].message.content = (
+                "SUMMARY 1: First async summary\n"
+                "SUMMARY 2: Second async summary"
+            )
+            
+            mock_openai_client.chat.completions.create.return_value = mock_response
+            
+            items = [
+                ("Content 1", "Source 1", "URL 1"),
+                ("Content 2", "Source 2", "URL 2")
+            ]
+            
+            results = await batch_summarize_async(items, "test-key", batch_size=2)
+            
+            self.assertEqual(len(results), 2)
+            mock_openai_client.chat.completions.create.assert_called_once()
+
+    def test_async_integration(self):
+        """Integration test for async functions."""
+        # Test that async functions are importable and have correct signatures
+        from src.summarize import summarize_async, summarize_concurrent_async, batch_summarize_async
+        
+        # Check function signatures
+        import inspect
+        
+        # summarize_async should be async
+        self.assertTrue(inspect.iscoroutinefunction(summarize_async))
+        
+        # summarize_concurrent_async should be async
+        self.assertTrue(inspect.iscoroutinefunction(summarize_concurrent_async))
+        
+        # batch_summarize_async should be async
+        self.assertTrue(inspect.iscoroutinefunction(batch_summarize_async))
 
 
 if __name__ == '__main__':
