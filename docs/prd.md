@@ -89,7 +89,7 @@ AI Engineering is **not about inventing neural networks—it's about integrating
 - **OpenAI**: GPT-4o, o1, o3-mini performance comparisons and cost optimization
 - **Google**: Gemini 2.5 Pro enterprise integration patterns (1M token context)
 - **Anthropic**: Claude 3.5 Sonnet coding benchmark leadership (SWE-bench)
-- **Open Source**: Llama 3, DeepSeek-R1 cost-effective alternatives for reasoning/coding
+- **Open Source**: Llama 4, DeepSeek-R1 cost-effective alternatives for reasoning/coding
 
 **AI-Assisted Development Tools:**
 - **IDE Plugins**: Cursor vs. Windsurf vs. Claude Code vs. GitHub Copilot
@@ -97,10 +97,10 @@ AI Engineering is **not about inventing neural networks—it's about integrating
 - **Emerging Platforms**: Devin AI, Amazon Kiro autonomous development tools
 
 **MLOps/LLMOps Infrastructure:**
-- **Experiment Tracking**: Weights & Biases, MLflow integration guides
-- **Data Versioning**: DVC, LakeFS best practices for prompt and dataset management
-- **Inference Serving**: SageMaker, Vertex AI, BentoML, Kubernetes deployment patterns
-- **Monitoring**: Prometheus, Grafana, WhyLabs, Arize setup for model drift detection
+- **Experiment Tracking**: SageMaker Experiments, MLflow, Weights & Biases integration guides
+- **Data Versioning**: S3 + DVC, AWS CodeCommit, LakeFS for prompt and dataset management
+- **Inference Serving**: SageMaker Endpoints, Lambda for serverless inference, ECS/EKS deployment patterns
+- **Monitoring**: CloudWatch, AWS X-Ray, Prometheus on EKS for model drift detection
 
 ### 3. 📚 Practical AI Engineering Roadmap (12-Month Plan)
 
@@ -113,22 +113,22 @@ AI Engineering is **not about inventing neural networks—it's about integrating
 - **Deliverable**: Working RAG prototype with evaluation metrics
 
 **Phase II (Months 4-6): Building Your First Production Pipeline**  
-- **MVP Focus**: FastAPI + vector database + React UI
-- **DevOps Integration**: Docker + GitHub Actions + cloud deployment
-- **MLOps Tools**: Experiment tracking, structured logging, CI/CD for models
-- **Deliverable**: Live web application with comprehensive monitoring
+- **MVP Focus**: FastAPI + OpenSearch/DocumentDB + React UI
+- **DevOps Integration**: Docker + GitHub Actions + CloudFormation deployment
+- **MLOps Tools**: SageMaker Experiments, structured logging, GitHub Actions for model CI/CD
+- **Deliverable**: Live web application with CloudWatch monitoring
 
 **Phase III (Months 7-9): Advanced Optimization & Automation**
 - **Focus**: Automated fine-tuning and model CI/CD pipelines
-- **Tools**: LoRA/DoRA, Weights & Biases, MLflow Model Registry
-- **DevOps Skills**: Infrastructure as Code for GPU fleets and inference endpoints
-- **Deliverable**: Fully automated model deployment and evaluation pipeline
+- **Tools**: LoRA/DoRA, SageMaker Training Jobs, SageMaker Model Registry
+- **AWS Infrastructure**: CloudFormation for EC2 GPU instances, SageMaker inference endpoints
+- **DevOps**: GitHub Actions workflows for automated model training and deployment
 
 **Phase IV (Months 10-12): Production Excellence**
-- **Scale**: Auto-scaling inference, governance, and reliability engineering
-- **Monitoring**: Grafana dashboards, drift detection, SLO management  
-- **Leadership**: Documentation, mentoring, reusable templates
-- **Deliverable**: Production-grade system handling 1,000+ RPS with defined SLOs
+- **Scale**: Application Auto Scaling for SageMaker endpoints, AWS Config for governance
+- **Monitoring**: CloudWatch dashboards, SageMaker Model Monitor for drift detection, Service Level Objectives  
+- **Leadership**: Well-Architected documentation, mentoring, reusable CloudFormation templates
+- **Deliverable**: Production-grade system on AWS handling 1,000+ RPS with defined SLOs
 
 ### 4. 🔨 Behind-the-Build Devlogs
 
@@ -143,9 +143,9 @@ AI Engineering is **not about inventing neural networks—it's about integrating
 **Priority Content Themes:**
 
 **1. DevOps Skills Transfer (30% of content)**
-- How CI/CD applies to model deployment and evaluation
-- Infrastructure as Code for AI systems (Terraform, CloudFormation)
-- Monitoring AI systems with familiar tools (Prometheus, Grafana)
+- How GitHub Actions applies to model deployment and evaluation
+- Infrastructure as Code for AI systems (CloudFormation, CDK, Terraform)
+- Monitoring AI systems with CloudWatch and SageMaker Model Monitor
 
 **2. Practical Implementation (40% of content)**  
 - Step-by-step tool integration guides (Aider, Continue Dev, CodeGPT)

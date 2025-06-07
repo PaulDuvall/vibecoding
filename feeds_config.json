@@ -313,8 +313,8 @@
       "enabled": true
     },
     {
-      "url": "https://hnrss.org/newest?q=amazon+kiro&points=15",
-      "source_name": "Hacker News: Amazon Kiro",
+      "url": "https://hnrss.org/newest?q=replit+agent&points=15",
+      "source_name": "Hacker News: Replit Agent",
       "category": "AI Tools",
       "enabled": true
     },
