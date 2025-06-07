@@ -251,6 +251,6 @@ EMAIL_TO            # Recipient email address
 
 ---
 
-**Last Updated**: 2024-06-07  
+**Last Updated**: 2025-06-07  
 **Python Version**: 3.11  
 **Package Version**: 1.0.0

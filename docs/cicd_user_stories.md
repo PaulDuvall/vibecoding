@@ -234,7 +234,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 
 ---
 
-_Last updated: 2024-06-07_
+_Last updated: 2025-06-07_
 
 
 ## US-100: Automated Quality Gates for Every Commit
@@ -310,4 +310,4 @@ _Last updated: 2024-06-07_
 
 ---
 
-_Last updated: 2024-06-07_
+_Last updated: 2025-06-07_
