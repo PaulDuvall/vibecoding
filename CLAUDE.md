@@ -7,11 +7,12 @@ This file provides Claude Code with essential project context, rules, and implem
 **Vibe Coding Digest** is an automated content aggregation and summarization tool that delivers curated, daily email digests of the most relevant developments in AI, developer tools, and emerging technology.
 
 ### Key Components
-- **RSS Feed Aggregation**: Multi-source content collection with concurrent processing
+- **RSS Feed Aggregation**: Multi-source content collection with concurrent processing from 29+ feeds
+- **External Configuration**: JSON/YAML feed management with categorization and enable/disable controls
 - **AI Summarization**: OpenAI-powered content summarization with error handling
 - **Email Delivery**: SendGrid integration for HTML digest delivery
 - **AWS Blog Search**: Targeted search functionality for AWS-specific content
-- **Test Suite**: Comprehensive unit and integration testing
+- **ATDD Test Suite**: Comprehensive unit, integration, and acceptance testing with user story traceability
 
 ## Project Structure
 
@@ -22,6 +23,7 @@ vibecoding/
 │   ├── vibe_digest.py     # Main orchestration and entry point
 │   ├── models.py          # Data models (DigestItem)
 │   ├── feeds.py           # RSS feed management and fetching
+│   ├── config_loader.py   # External configuration management
 │   ├── summarize.py       # OpenAI summarization logic
 │   ├── email_utils.py     # SendGrid email functionality
 │   └── aws_blog_search.py # AWS blog search functionality
@@ -29,13 +31,25 @@ vibecoding/
 │   ├── test_vibe_digest.py     # Core functionality tests
 │   ├── test_aws_blog_search.py # AWS search tests
 │   ├── test_integration.py     # End-to-end pipeline tests
-│   └── test_sample_module.py   # Legacy (cleanup target)
+│   ├── test_optimizations.py   # Performance optimization tests
+│   └── features/              # ATDD feature specifications
+│       ├── digest_workflow.feature      # Main digest scenarios
+│       ├── externalized_config.feature  # Configuration scenarios
+│       ├── environment.py               # Behave setup
+│       └── steps/                       # Step definitions
+│           ├── digest_steps.py          # Main workflow steps
+│           └── config_steps.py          # Configuration steps
+├── docs/                  # Project documentation
+│   ├── user_stories.md    # User stories with acceptance criteria
+│   ├── traceability_matrix.md # ATDD traceability documentation
+│   └── prd.md            # Product Requirements Document
 ├── .github/
 │   └── workflows/
 │       └── vibe-coding-digest.yml # CI/CD automation
-├── docs/                  # Project documentation
+├── feeds_config.json      # Default external feed configuration
+├── .attdrules.md         # ATDD/BDD development guidelines
 ├── pyproject.toml         # Modern Python package configuration
-├── requirements.txt       # Runtime dependencies
+├── requirements.txt       # Runtime dependencies (includes PyYAML)
 └── run.sh                # Development utility script
 ```
 
@@ -54,10 +68,11 @@ vibecoding/
 - **Documentation**: Comprehensive docstrings and comments
 
 ### Testing Standards
-- **Test-Driven Development**: Write tests before implementation
-- **Coverage**: Pytest-cov integration with HTML reports
-- **Test Types**: Unit, integration, and pipeline tests
+- **ATDD-Driven Development**: Write Gherkin feature specifications before implementation
+- **Test Coverage**: Pytest-cov integration with HTML reports  
+- **Test Types**: Unit, integration, and acceptance tests with user story traceability
 - **Mock Strategy**: Comprehensive external service mocking
+- **User Story Mapping**: Each test maps to specific user stories (US-001 through US-305)
 
 ## Development Workflow
 
@@ -97,9 +112,32 @@ EMAIL_TO            # Recipient email address
 ```
 
 ### Feed Configuration
-- RSS feeds defined in `src/feeds.py`
-- Source name mappings in `FEED_SOURCES` dictionary
-- Concurrent fetching with retry logic
+
+**External Configuration System (Recommended)**
+- **Configuration Files**: Support for JSON and YAML formats (`feeds_config.json`, `feeds_config.yaml`)
+- **Environment Variables**: `VIBE_CONFIG_PATH` for custom configuration file paths
+- **Feed Management**: Individual enable/disable controls without removal
+- **Categorization**: Organize feeds by AI, DevTools, Community, YouTube, Blogs
+- **Validation**: Comprehensive error checking with helpful error messages
+
+**Default Configuration**
+- 29 pre-configured feeds across all categories in `feeds_config.json`
+- Includes Google Alerts, RSS feeds, GitHub releases, YouTube channels
+- Backward compatible fallback to hardcoded feeds in `src/feeds.py`
+
+**Configuration Structure**
+```json
+{
+  "feeds": [
+    {
+      "url": "https://openai.com/news/rss.xml",
+      "source_name": "OpenAI News",
+      "category": "AI",
+      "enabled": true
+    }
+  ]
+}
+```
 
 ## Testing Strategy
 
