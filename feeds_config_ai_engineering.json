@@ -1,0 +1,256 @@
+{
+  "feeds": [
+    {
+      "url": "https://www.reddit.com/r/AIDevelopment/.rss",
+      "source_name": "Reddit: AI Development",
+      "category": "Community",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=AI+engineer&points=30",
+      "source_name": "Hacker News: AI Engineer",
+      "category": "Community",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=cursor+IDE&points=20",
+      "source_name": "Hacker News: Cursor IDE",
+      "category": "AI Tools",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=windsurf+IDE&points=20",
+      "source_name": "Hacker News: Windsurf IDE",
+      "category": "AI Tools",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=claude+code&points=20",
+      "source_name": "Hacker News: Claude Code",
+      "category": "AI Tools",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=github+copilot&points=30",
+      "source_name": "Hacker News: GitHub Copilot",
+      "category": "AI Tools",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=LLM+engineering&points=20",
+      "source_name": "Hacker News: LLM Engineering",
+      "category": "AI Engineering",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=prompt+engineering&points=30",
+      "source_name": "Hacker News: Prompt Engineering",
+      "category": "AI Engineering",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=RAG+pipeline&points=20",
+      "source_name": "Hacker News: RAG Pipeline",
+      "category": "AI Engineering",
+      "enabled": true
+    },
+    {
+      "url": "https://www.cursor.sh/blog/rss.xml",
+      "source_name": "Cursor Blog",
+      "category": "AI Tools",
+      "enabled": true
+    },
+    {
+      "url": "https://windsurf.com/blog/rss.xml",
+      "source_name": "Windsurf Blog",
+      "category": "AI Tools",
+      "enabled": true
+    },
+    {
+      "url": "https://latent.space/feed",
+      "source_name": "Latent Space (AI Engineering)",
+      "category": "AI Engineering",
+      "enabled": true
+    },
+    {
+      "url": "https://simonwillison.net/atom/everything/",
+      "source_name": "Simon Willison (AI Engineering)",
+      "category": "Blogs",
+      "enabled": true
+    },
+    {
+      "url": "https://lilianweng.github.io/index.xml",
+      "source_name": "Lil'Log (OpenAI Research)",
+      "category": "AI Engineering",
+      "enabled": true
+    },
+    {
+      "url": "https://openai.com/news/rss.xml",
+      "source_name": "OpenAI News",
+      "category": "AI",
+      "enabled": true
+    },
+    {
+      "url": "https://www.anthropic.com/news/feed.xml",
+      "source_name": "Anthropic Blog",
+      "category": "AI",
+      "enabled": true
+    },
+    {
+      "url": "https://github.com/getcursor/cursor/releases.atom",
+      "source_name": "GitHub: Cursor Releases",
+      "category": "AI Tools",
+      "enabled": true
+    },
+    {
+      "url": "https://github.com/codeium-windsurf/windsurf/releases.atom",
+      "source_name": "GitHub: Windsurf Releases",
+      "category": "AI Tools",
+      "enabled": true
+    },
+    {
+      "url": "https://github.com/Aider-AI/aider/releases.atom",
+      "source_name": "GitHub: Aider Releases",
+      "category": "AI Tools",
+      "enabled": true
+    },
+    {
+      "url": "https://github.com/continuedev/continue/releases.atom",
+      "source_name": "GitHub: Continue Dev Releases",
+      "category": "AI Tools",
+      "enabled": true
+    },
+    {
+      "url": "https://github.com/langchain-ai/langchain/releases.atom",
+      "source_name": "GitHub: LangChain Releases",
+      "category": "AI Frameworks",
+      "enabled": true
+    },
+    {
+      "url": "https://github.com/run-llama/llama_index/releases.atom",
+      "source_name": "GitHub: LlamaIndex Releases",
+      "category": "AI Frameworks",
+      "enabled": true
+    },
+    {
+      "url": "https://github.com/microsoft/autogen/releases.atom",
+      "source_name": "GitHub: AutoGen Releases",
+      "category": "AI Frameworks",
+      "enabled": true
+    },
+    {
+      "url": "https://github.com/crewAIInc/crewAI/releases.atom",
+      "source_name": "GitHub: CrewAI Releases",
+      "category": "AI Frameworks",
+      "enabled": true
+    },
+    {
+      "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCX7Y2qWpixPsqPApNw_1qSQ",
+      "source_name": "YouTube: AI Explained",
+      "category": "YouTube",
+      "enabled": true
+    },
+    {
+      "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCrXFpZVRnxSkpqwdpuEJUhA",
+      "source_name": "YouTube: Matt Wolfe (AI Tools)",
+      "category": "YouTube",
+      "enabled": true
+    },
+    {
+      "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCl2mW3G5u8tB9VQ7S7nOgdw",
+      "source_name": "YouTube: Fireship",
+      "category": "YouTube",
+      "enabled": true
+    },
+    {
+      "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCP_r0x3Y8S_D_h_FmYqg4Gw",
+      "source_name": "YouTube: Latent Space Podcast",
+      "category": "YouTube",
+      "enabled": true
+    },
+    {
+      "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCbfYPyITQ-7l4upoX8nvctg",
+      "source_name": "YouTube: Two Minute Papers",
+      "category": "YouTube",
+      "enabled": true
+    },
+    {
+      "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCXUPKJO5MZQN11PqgIvyuvQ",
+      "source_name": "YouTube: Andrej Karpathy",
+      "category": "YouTube",
+      "enabled": true
+    },
+    {
+      "url": "https://github.blog/category/ai-and-ml/feed/",
+      "source_name": "GitHub Blog: AI & ML",
+      "category": "Blogs",
+      "enabled": true
+    },
+    {
+      "url": "https://www.google.com/alerts/feeds/11805205268710618137/17153509184522491480",
+      "source_name": "Google Alerts: OpenAI",
+      "category": "AI",
+      "enabled": true
+    },
+    {
+      "url": "https://www.producthunt.com/topics/developer-tools.rss",
+      "source_name": "Product Hunt: Developer Tools",
+      "category": "AI Tools",
+      "enabled": true
+    },
+    {
+      "url": "https://www.producthunt.com/topics/artificial-intelligence.rss",
+      "source_name": "Product Hunt: AI",
+      "category": "AI",
+      "enabled": true
+    },
+    {
+      "url": "https://newsletter.theaiedge.io/feed",
+      "source_name": "The AI Edge Newsletter",
+      "category": "AI Engineering",
+      "enabled": true
+    },
+    {
+      "url": "https://www.reddit.com/r/LocalLLaMA/.rss",
+      "source_name": "Reddit: LocalLLaMA",
+      "category": "Community",
+      "enabled": true
+    },
+    {
+      "url": "https://www.reddit.com/r/LangChain/.rss",
+      "source_name": "Reddit: LangChain",
+      "category": "Community",
+      "enabled": true
+    },
+    {
+      "url": "https://huggingface.co/blog/feed.xml",
+      "source_name": "Hugging Face Blog",
+      "category": "AI",
+      "enabled": true
+    },
+    {
+      "url": "https://towardsdatascience.com/feed",
+      "source_name": "Towards Data Science",
+      "category": "Blogs",
+      "enabled": false
+    },
+    {
+      "url": "https://www.reddit.com/r/MachineLearning/.rss",
+      "source_name": "Reddit: Machine Learning",
+      "category": "Community",
+      "enabled": false
+    },
+    {
+      "url": "https://www.reddit.com/r/programming/.rss",
+      "source_name": "Reddit: Programming",
+      "category": "Community",
+      "enabled": false
+    },
+    {
+      "url": "https://www.reddit.com/r/artificial/.rss",
+      "source_name": "Reddit: Artificial Intelligence",
+      "category": "Community",
+      "enabled": false
+    }
+  ]
+}

@@ -173,6 +173,84 @@
       "source_name": "GitHub Releases: AutoGen",
       "category": "DevTools",
       "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=AI+engineer&points=30",
+      "source_name": "Hacker News: AI Engineer",
+      "category": "AI",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=agentic+coding&points=20",
+      "source_name": "Hacker News: Agentic Coding",
+      "category": "AI",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=software+development+agent&points=20",
+      "source_name": "Hacker News: Software Development Agents",
+      "category": "AI",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=autonomous+software&points=20",
+      "source_name": "Hacker News: Autonomous Software",
+      "category": "AI",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=LLM+engineering&points=20",
+      "source_name": "Hacker News: LLM Engineering",
+      "category": "AI",
+      "enabled": true
+    },
+    {
+      "url": "https://hnrss.org/newest?q=prompt+engineering&points=30",
+      "source_name": "Hacker News: Prompt Engineering",
+      "category": "AI",
+      "enabled": true
+    },
+    {
+      "url": "https://www.reddit.com/r/AIDevelopment/.rss",
+      "source_name": "Reddit: AI Development",
+      "category": "Community",
+      "enabled": true
+    },
+    {
+      "url": "https://www.reddit.com/r/LocalLLaMA/.rss",
+      "source_name": "Reddit: LocalLLaMA",
+      "category": "Community",
+      "enabled": true
+    },
+    {
+      "url": "https://github.com/Aider-AI/aider/releases.atom",
+      "source_name": "GitHub Releases: Aider",
+      "category": "DevTools",
+      "enabled": true
+    },
+    {
+      "url": "https://github.com/continuedev/continue/releases.atom",
+      "source_name": "GitHub Releases: Continue Dev",
+      "category": "DevTools",
+      "enabled": true
+    },
+    {
+      "url": "https://github.com/crewAIInc/crewAI/releases.atom",
+      "source_name": "GitHub Releases: CrewAI",
+      "category": "DevTools",
+      "enabled": true
+    },
+    {
+      "url": "https://simonwillison.net/atom/everything/",
+      "source_name": "Simon Willison (AI Engineering)",
+      "category": "Blogs",
+      "enabled": true
+    },
+    {
+      "url": "https://huggingface.co/blog/feed.xml",
+      "source_name": "Hugging Face Blog",
+      "category": "AI",
+      "enabled": true
     }
   ]
 }

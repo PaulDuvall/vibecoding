@@ -34,10 +34,16 @@ def fetch_aws_blog_posts(base_queries=None, max_results_per_query=3):
         queries = ["vibe coding", "security engineering", "vibe coding security"]
     else:
         queries = list(base_queries)
-    # Always include these related terms
+    # Always include these AI Engineering and agentic coding terms
     queries += [
         "agentic coding", "amazon q developer", "codewhisperer",
-        "vibe coding security engineering", "vibe coding security"
+        "vibe coding security engineering", "vibe coding security",
+        "AI engineer", "AI engineering", "LLM engineering",
+        "software development agent", "autonomous software development",
+        "prompt engineering", "generative AI", "foundation models",
+        "bedrock", "claude", "anthropic", "machine learning operations",
+        "MLOps", "LLMOps", "model deployment", "AI assistant",
+        "copilot", "code generation", "automated coding"
     ]
     rss_url = "https://aws.amazon.com/blogs/aws/feed/"
     feed = feedparser.parse(rss_url)
