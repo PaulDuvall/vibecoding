@@ -6,7 +6,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 
 ## I. Foundational Principles & Culture
 
-### US-200: Build Quality In
+### US-200: Build Quality In ✅ IMPLEMENTED
 **As** a developer,
 **I want** to proactively build quality into the product from the start,
 **So that** defects are caught early and not left for downstream inspection.
@@ -14,7 +14,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 - Automated tests, linters, and secret scans run locally and in CI (see `.cicdrules.md` §I.1, I.3).
 - Pre-commit/pre-push hooks are recommended and documented for local enforcement.
 
-### US-201: Work in Small, Incremental Batches
+### US-201: Work in Small, Incremental Batches ✅ IMPLEMENTED
 **As** a team member,
 **I want** to integrate and release changes in small, frequent increments,
 **So that** feedback is fast and risk is minimized.
@@ -22,7 +22,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 - All changes are integrated via short-lived branches or trunk-based development (see `.cicdrules.md` §I.2, II.10, II.11).
 - The CI pipeline is triggered on every push/PR.
 
-### US-202: Everyone is Responsible (Cross-Functional Teams)
+### US-202: Everyone is Responsible (Cross-Functional Teams) ✅ IMPLEMENTED
 **As** a project participant,
 **I want** CI/CD success to be a shared responsibility,
 **So that** quality, security, and delivery are team-wide concerns.
@@ -34,14 +34,14 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 
 ## II. Source Code Management & Version Control
 
-### US-210: Version Control Everything
+### US-210: Version Control Everything ✅ IMPLEMENTED
 **As** a developer,
 **I want** all project artifacts versioned in a single source of truth,
 **So that** traceability and reproducibility are ensured.
 **Acceptance Criteria:**
 - All code, scripts, configs, docs, and IaC are in version control (see `.cicdrules.md` §II.9).
 
-### US-211: Trunk-Based Development
+### US-211: Trunk-Based Development ✅ IMPLEMENTED
 **As** a developer,
 **I want** to integrate code into the mainline frequently,
 **So that** merge pain and integration risk are minimized.
@@ -53,7 +53,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 
 ## III. Pipeline, Build, & Artifact Management
 
-### US-220: Pipeline as Code
+### US-220: Pipeline as Code ✅ IMPLEMENTED
 **As** a pipeline maintainer,
 **I want** the deployment pipeline defined and managed as code,
 **So that** changes are visible, reviewable, and versioned.
@@ -61,7 +61,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 - All pipeline configs are stored in version control (see `.cicdrules.md` §III.15).
 - Pipeline changes require code review.
 
-### US-221: Build Binaries Once, Promote Artifacts
+### US-221: Build Binaries Once, Promote Artifacts ⚠️ PARTIALLY IMPLEMENTED
 **As** a build engineer,
 **I want** to build artifacts once and promote them through environments,
 **So that** integrity and traceability are preserved.
@@ -69,7 +69,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 - Binaries are built once per commit and versioned (see `.cicdrules.md` §IV.18, IV.19, IV.20).
 - Artifacts are signed and stored in a managed repository.
 
-### US-222: Automated Quality Gates
+### US-222: Automated Quality Gates ✅ IMPLEMENTED
 **As** a developer,
 **I want** automated quality gates (tests, lint, security) enforced in CI,
 **So that** only compliant code is merged.
@@ -80,7 +80,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 
 ## IV. Automated Testing Strategies
 
-### US-230: Test Pyramid & Fast Feedback
+### US-230: Test Pyramid & Fast Feedback ✅ IMPLEMENTED
 **As** a tester,
 **I want** a layered, fast, and reliable automated test suite,
 **So that** defects are caught early and feedback is quick.
@@ -88,7 +88,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 - Unit, integration, acceptance, and E2E tests are defined (see `.cicdrules.md` §VI.32-36).
 - Commit-stage tests run in <10 minutes; flaky tests are eliminated.
 
-### US-231: Shift Testing Left
+### US-231: Shift Testing Left ✅ IMPLEMENTED
 **As** a developer,
 **I want** to run tests as early as possible,
 **So that** issues are found before code is merged.
@@ -96,7 +96,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 - Developers can run all tests locally (see `.cicdrules.md` §VI.33).
 - CI enforces passing tests before merge.
 
-### US-232: Test Data Management
+### US-232: Test Data Management ✅ IMPLEMENTED
 **As** a tester,
 **I want** test data to be isolated, representative, and safe,
 **So that** tests are reliable and secure.
@@ -108,7 +108,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 
 ## V. Deployment, Release, & Rollback
 
-### US-240: Scripted, Automated Deployments
+### US-240: Scripted, Automated Deployments ✅ IMPLEMENTED
 **As** an operator,
 **I want** all deployments to be automated and script-driven,
 **So that** releases are repeatable and reliable.
@@ -116,7 +116,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 - All deployments run from scripts in version control (see `.cicdrules.md` §VII.40-43, VIII.45).
 - Manual steps are minimized and documented.
 
-### US-241: Progressive Delivery & Rollback
+### US-241: Progressive Delivery & Rollback ⚠️ NOT IMPLEMENTED
 **As** a release manager,
 **I want** to use blue/green, canary, or rolling deployments with automated rollback,
 **So that** risk is minimized and recovery is fast.
@@ -128,7 +128,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 
 ## VI. Infrastructure & Environment Management
 
-### US-250: Infrastructure as Code (IaC)
+### US-250: Infrastructure as Code (IaC) ⚠️ NOT IMPLEMENTED
 **As** an ops engineer,
 **I want** all infrastructure defined and managed as code,
 **So that** environments are consistent and reproducible.
@@ -136,7 +136,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 - All infra is defined in IaC and versioned (see `.cicdrules.md` §IX.50-53).
 - Environments are provisioned via pipeline, not manually.
 
-### US-251: Production-Like, On-Demand Environments
+### US-251: Production-Like, On-Demand Environments ⚠️ NOT IMPLEMENTED
 **As** a tester,
 **I want** dev/test environments to match production and be created on demand,
 **So that** testing is accurate and resource use is efficient.
@@ -148,7 +148,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 
 ## VII. Security (DevSecOps)
 
-### US-260: Shift Security Left
+### US-260: Shift Security Left ✅ IMPLEMENTED
 **As** a security engineer,
 **I want** security checks integrated throughout the CI/CD lifecycle,
 **So that** vulnerabilities are caught early.
@@ -156,7 +156,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 - SAST, SCA, DAST, and secrets scanning are run in CI (see `.cicdrules.md` §XI.63-67).
 - Critical security violations fail the build and block deploys.
 
-### US-261: Secure Secrets Management
+### US-261: Secure Secrets Management ✅ IMPLEMENTED
 **As** a developer,
 **I want** secrets never hardcoded or committed,
 **So that** credentials are protected.
@@ -164,7 +164,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 - Secrets are injected securely at runtime (see `.cicdrules.md` §XI.65).
 - All secrets are managed in a vault or secrets manager.
 
-### US-262: Principle of Least Privilege
+### US-262: Principle of Least Privilege ✅ IMPLEMENTED
 **As** a pipeline operator,
 **I want** all CI/CD service accounts and roles to have only the permissions they need,
 **So that** risk is minimized.
@@ -172,7 +172,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 - IAM roles/policies for CI/CD are least-privilege (see `.cicdrules.md` §XI.66).
 - Access is regularly audited.
 
-### US-263: Secure the CI/CD Pipeline
+### US-263: Secure the CI/CD Pipeline ✅ IMPLEMENTED
 **As** a security lead,
 **I want** the pipeline infrastructure itself to be protected,
 **So that** the delivery system is not a weak link.
@@ -184,7 +184,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 
 ## VIII. Monitoring, Feedback, & Optimization
 
-### US-270: Comprehensive Monitoring & Dashboards
+### US-270: Comprehensive Monitoring & Dashboards ⚠️ PARTIALLY IMPLEMENTED
 **As** a team,
 **I want** real-time monitoring and dashboards for pipeline and app health,
 **So that** issues are detected early and transparency is high.
@@ -192,7 +192,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 - Pipeline and app metrics are collected and visualized (see `.cicdrules.md` §XII.72-74).
 - Alerts are actionable and routed to the right people.
 
-### US-271: Optimize for Speed, Reliability, and Cost
+### US-271: Optimize for Speed, Reliability, and Cost ✅ IMPLEMENTED
 **As** a pipeline maintainer,
 **I want** to continuously optimize for pipeline speed, reliability, and cost,
 **So that** feedback is fast and resources are used efficiently.
@@ -204,7 +204,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 
 ## IX. Documentation, Collaboration, and DevEx
 
-### US-280: Documentation as Code
+### US-280: Documentation as Code ✅ IMPLEMENTED
 **As** a team member,
 **I want** all pipeline, process, and config documentation versioned with code,
 **So that** docs are always up to date and accessible.
@@ -212,7 +212,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 - Docs are maintained in version control (see `.cicdrules.md` §XIII.82).
 - Pipeline/config changes require doc updates.
 
-### US-281: Standardized Tooling & Developer Experience
+### US-281: Standardized Tooling & Developer Experience ✅ IMPLEMENTED
 **As** a developer,
 **I want** consistent, intuitive tools and processes,
 **So that** onboarding and daily work are smooth.
@@ -224,7 +224,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 
 ## X. Anti-Patterns (Negative Acceptance Criteria)
 
-### US-290: Avoid Manual, Unscripted, or Unversioned Steps
+### US-290: Avoid Manual, Unscripted, or Unversioned Steps ✅ IMPLEMENTED
 **As** a pipeline reviewer,
 **I want** to ensure all steps are automated, versioned, and repeatable,
 **So that** risk from manual or ad-hoc changes is eliminated.
@@ -237,7 +237,7 @@ These user stories are derived from `.cicdrules.md` and define the requirements 
 _Last updated: 2025-06-07_
 
 
-## US-100: Automated Quality Gates for Every Commit
+## US-100: Automated Quality Gates for Every Commit ✅ IMPLEMENTED
 **As** a developer,
 **I want** every commit to trigger automated quality checks (lint, test, security),
 **So that** only code meeting project standards is merged.
@@ -250,7 +250,7 @@ _Last updated: 2025-06-07_
 
 ---
 
-## US-101: Automated Secrets Scanning in CI/CD
+## US-101: Automated Secrets Scanning in CI/CD ✅ IMPLEMENTED
 **As** a security-conscious team member,
 **I want** the CI/CD pipeline to automatically scan for hardcoded secrets using an open-source tool,
 **So that** secrets are detected and blocked before deployment.
@@ -262,7 +262,7 @@ _Last updated: 2025-06-07_
 
 ---
 
-## US-102: Fast Feedback on Build and Test Failures
+## US-102: Fast Feedback on Build and Test Failures ✅ IMPLEMENTED
 **As** a developer,
 **I want** immediate feedback when a build or test fails in CI/CD,
 **So that** I can fix issues before they reach production.
@@ -274,7 +274,7 @@ _Last updated: 2025-06-07_
 
 ---
 
-## US-103: Consistent, Automated Deployments
+## US-103: Consistent, Automated Deployments ✅ IMPLEMENTED
 **As** an operator,
 **I want** deployments to all environments to be automated and consistent,
 **So that** releases are reliable and repeatable.
@@ -286,7 +286,7 @@ _Last updated: 2025-06-07_
 
 ---
 
-## US-104: Traceability from User Story to Implementation
+## US-104: Traceability from User Story to Implementation ✅ IMPLEMENTED
 **As** a project stakeholder,
 **I want** every CI/CD requirement to be traceable to code, configuration, and tests,
 **So that** compliance and auditability are ensured.
@@ -298,7 +298,7 @@ _Last updated: 2025-06-07_
 
 ---
 
-## US-105: Security and Compliance Automation
+## US-105: Security and Compliance Automation ✅ IMPLEMENTED
 **As** a security lead,
 **I want** the pipeline to enforce security best practices (e.g., least privilege, secrets scanning, SAST),
 **So that** the project meets compliance and audit requirements.
