@@ -39,20 +39,24 @@ def step_rss_feeds_accessible(context):
         'title': 'Test Feed',
         'link': 'https://test.com/feed'
     }
-    # Create mock entries with proper attributes
-    mock_entry1 = Mock()
-    mock_entry1.title = 'Test Article 1'
-    mock_entry1.link = 'https://test.com/article1'
-    mock_entry1.summary = 'This is a test article about AI development.'
-    mock_entry1.published = 'Mon, 01 Jan 2024 00:00:00 GMT'
-    mock_entry1.get = lambda key, default=None: getattr(mock_entry1, key, default)
     
-    mock_entry2 = Mock()
-    mock_entry2.title = 'Test Article 2'
-    mock_entry2.link = 'https://test.com/article2'
-    mock_entry2.summary = 'Another test article about developer tools.'
-    mock_entry2.published = 'Mon, 01 Jan 2024 01:00:00 GMT'
-    mock_entry2.get = lambda key, default=None: getattr(mock_entry2, key, default)
+    # Create mock entries that behave like real feedparser entries
+    # Use plain dictionaries instead of Mocks to avoid comparison issues
+    mock_entry1 = type('MockEntry', (), {
+        'title': 'Test Article 1',
+        'link': 'https://test.com/article1',
+        'summary': 'This is a test article about AI development.',
+        'published': 'Mon, 01 Jan 2024 00:00:00 GMT',
+        'get': lambda self, key, default=None: getattr(self, key, default)
+    })()
+    
+    mock_entry2 = type('MockEntry', (), {
+        'title': 'Test Article 2', 
+        'link': 'https://test.com/article2',
+        'summary': 'Another test article about developer tools.',
+        'published': 'Mon, 01 Jan 2024 01:00:00 GMT',
+        'get': lambda self, key, default=None: getattr(self, key, default)
+    })()
     
     context.mock_feed_data.entries = [mock_entry1, mock_entry2]
 
@@ -448,29 +452,32 @@ def step_delivery_failure_properly_reported(context):
 @given('multiple RSS feeds contain the same article')
 def step_multiple_feeds_contain_same_article(context):
     """Set up scenario where multiple feeds have duplicate content."""
-    # Create mock feeds with duplicate articles
-    duplicate_article = Mock()
-    duplicate_article.title = 'Breakthrough in AI Development'
-    duplicate_article.link = 'https://example.com/ai-breakthrough'
-    duplicate_article.summary = 'Major breakthrough announced in AI development with new techniques.'
-    duplicate_article.published = 'Mon, 01 Jan 2024 12:00:00 GMT'
-    duplicate_article.get = lambda key, default=None: getattr(duplicate_article, key, default)
+    # Create mock feeds with duplicate articles using dynamic classes
+    duplicate_article = type('MockEntry', (), {
+        'title': 'Breakthrough in AI Development',
+        'link': 'https://example.com/ai-breakthrough',
+        'summary': 'Major breakthrough announced in AI development with new techniques.',
+        'published': 'Mon, 01 Jan 2024 12:00:00 GMT',
+        'get': lambda self, key, default=None: getattr(self, key, default)
+    })()
     
     # Create slightly different version of same article (different URL, same content)
-    duplicate_article_variant = Mock()
-    duplicate_article_variant.title = 'Breakthrough in AI Development'  # Same title
-    duplicate_article_variant.link = 'https://different-source.com/ai-news'  # Different URL
-    duplicate_article_variant.summary = 'Major breakthrough announced in AI development with new techniques.'  # Same summary
-    duplicate_article_variant.published = 'Mon, 01 Jan 2024 12:30:00 GMT'  # Slightly different time
-    duplicate_article_variant.get = lambda key, default=None: getattr(duplicate_article_variant, key, default)
+    duplicate_article_variant = type('MockEntry', (), {
+        'title': 'Breakthrough in AI Development',  # Same title
+        'link': 'https://different-source.com/ai-news',  # Different URL
+        'summary': 'Major breakthrough announced in AI development with new techniques.',  # Same summary
+        'published': 'Mon, 01 Jan 2024 12:30:00 GMT',  # Slightly different time
+        'get': lambda self, key, default=None: getattr(self, key, default)
+    })()
     
     # Create unique article for comparison
-    unique_article = Mock()
-    unique_article.title = 'New Framework Released'
-    unique_article.link = 'https://example.com/framework-release'
-    unique_article.summary = 'A new development framework has been released with improved features.'
-    unique_article.published = 'Mon, 01 Jan 2024 13:00:00 GMT'
-    unique_article.get = lambda key, default=None: getattr(unique_article, key, default)
+    unique_article = type('MockEntry', (), {
+        'title': 'New Framework Released',
+        'link': 'https://example.com/framework-release',
+        'summary': 'A new development framework has been released with improved features.',
+        'published': 'Mon, 01 Jan 2024 13:00:00 GMT',
+        'get': lambda self, key, default=None: getattr(self, key, default)
+    })()
     
     # Set up mock feed data with duplicates
     context.mock_feed_data.entries = [duplicate_article, duplicate_article_variant, unique_article]
@@ -534,20 +541,22 @@ def step_aws_blog_search_configured(context):
 @given('AWS RSS feeds are accessible')
 def step_aws_rss_feeds_accessible(context):
     """Set up AWS-specific RSS feeds."""
-    # Create AWS-specific mock articles
-    aws_article1 = Mock()
-    aws_article1.title = 'New AWS AI Service Announced'
-    aws_article1.link = 'https://aws.amazon.com/blogs/aws/new-ai-service'
-    aws_article1.summary = 'AWS announces a new artificial intelligence service for developers.'
-    aws_article1.published = 'Mon, 01 Jan 2024 14:00:00 GMT'
-    aws_article1.get = lambda key, default=None: getattr(aws_article1, key, default)
+    # Create AWS-specific mock articles using dynamic classes
+    aws_article1 = type('MockEntry', (), {
+        'title': 'New AWS AI Service Announced',
+        'link': 'https://aws.amazon.com/blogs/aws/new-ai-service',
+        'summary': 'AWS announces a new artificial intelligence service for developers.',
+        'published': 'Mon, 01 Jan 2024 14:00:00 GMT',
+        'get': lambda self, key, default=None: getattr(self, key, default)
+    })()
     
-    aws_article2 = Mock()
-    aws_article2.title = 'Serverless Best Practices on AWS'
-    aws_article2.link = 'https://aws.amazon.com/blogs/aws/serverless-best-practices'
-    aws_article2.summary = 'Learn the best practices for building serverless applications on AWS.'
-    aws_article2.published = 'Mon, 01 Jan 2024 15:00:00 GMT'
-    aws_article2.get = lambda key, default=None: getattr(aws_article2, key, default)
+    aws_article2 = type('MockEntry', (), {
+        'title': 'Serverless Best Practices on AWS',
+        'link': 'https://aws.amazon.com/blogs/aws/serverless-best-practices',
+        'summary': 'Learn the best practices for building serverless applications on AWS.',
+        'published': 'Mon, 01 Jan 2024 15:00:00 GMT',
+        'get': lambda self, key, default=None: getattr(self, key, default)
+    })()
     
     # Add AWS articles to the existing mock feed data
     if hasattr(context, 'mock_feed_data') and hasattr(context.mock_feed_data, 'entries'):
@@ -771,27 +780,30 @@ def step_memory_usage_within_reasonable_limits(context):
 @given('RSS feeds contain technical content about AI and developer tools')
 def step_rss_feeds_contain_technical_content(context):
     """Set up RSS feeds with technical AI and developer tool content."""
-    # Create technical content articles
-    ai_article = Mock()
-    ai_article.title = 'New Neural Network Architecture for Natural Language Processing'
-    ai_article.link = 'https://ai-research.com/neural-network-nlp'
-    ai_article.summary = 'Researchers have developed a novel neural network architecture that improves natural language processing tasks by 15% over previous transformer models. The architecture uses attention mechanisms with sparse connections and dynamic routing.'
-    ai_article.published = 'Mon, 01 Jan 2024 10:00:00 GMT'
-    ai_article.get = lambda key, default=None: getattr(ai_article, key, default)
+    # Create technical content articles using dynamic classes
+    ai_article = type('MockEntry', (), {
+        'title': 'New Neural Network Architecture for Natural Language Processing',
+        'link': 'https://ai-research.com/neural-network-nlp',
+        'summary': 'Researchers have developed a novel neural network architecture that improves natural language processing tasks by 15% over previous transformer models. The architecture uses attention mechanisms with sparse connections and dynamic routing.',
+        'published': 'Mon, 01 Jan 2024 10:00:00 GMT',
+        'get': lambda self, key, default=None: getattr(self, key, default)
+    })()
     
-    dev_tools_article = Mock()
-    dev_tools_article.title = 'Docker Container Security Best Practices for Production'
-    dev_tools_article.link = 'https://devtools.com/docker-security-best-practices'
-    dev_tools_article.summary = 'A comprehensive guide to securing Docker containers in production environments, covering image scanning, runtime security, network policies, and secrets management. Includes practical examples and code snippets.'
-    dev_tools_article.published = 'Mon, 01 Jan 2024 11:00:00 GMT'
-    dev_tools_article.get = lambda key, default=None: getattr(dev_tools_article, key, default)
+    dev_tools_article = type('MockEntry', (), {
+        'title': 'Docker Container Security Best Practices for Production',
+        'link': 'https://devtools.com/docker-security-best-practices',
+        'summary': 'A comprehensive guide to securing Docker containers in production environments, covering image scanning, runtime security, network policies, and secrets management. Includes practical examples and code snippets.',
+        'published': 'Mon, 01 Jan 2024 11:00:00 GMT',
+        'get': lambda self, key, default=None: getattr(self, key, default)
+    })()
     
-    kubernetes_article = Mock()
-    kubernetes_article.title = 'Kubernetes Observability with OpenTelemetry and Prometheus'
-    kubernetes_article.link = 'https://k8s-blog.com/observability-opentelemetry'
-    kubernetes_article.summary = 'Learn how to implement comprehensive observability in Kubernetes clusters using OpenTelemetry for distributed tracing and Prometheus for metrics collection. Covers configuration, best practices, and troubleshooting.'
-    kubernetes_article.published = 'Mon, 01 Jan 2024 12:00:00 GMT'
-    kubernetes_article.get = lambda key, default=None: getattr(kubernetes_article, key, default)
+    kubernetes_article = type('MockEntry', (), {
+        'title': 'Kubernetes Observability with OpenTelemetry and Prometheus',
+        'link': 'https://k8s-blog.com/observability-opentelemetry',
+        'summary': 'Learn how to implement comprehensive observability in Kubernetes clusters using OpenTelemetry for distributed tracing and Prometheus for metrics collection. Covers configuration, best practices, and troubleshooting.',
+        'published': 'Mon, 01 Jan 2024 12:00:00 GMT',
+        'get': lambda self, key, default=None: getattr(self, key, default)
+    })()
     
     # Set up mock feed data with technical content
     context.mock_feed_data = Mock()
