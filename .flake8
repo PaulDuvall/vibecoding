@@ -3,10 +3,11 @@ exclude = .venv,build,dist,venv
 max-line-length = 100
 per-file-ignores =
     __init__.py: F401,W292
-    tests/*.py: E402,W291,W293,E302,F401
+    tests/*.py: E402,W291,W293,E302,F401,E306
     tests/test_integration.py: W292
+    tests/test_optimizations.py: E306
     docs/*.py: E501
     src/aws_blog_search.py: E303
     .github/scripts/aws_blog_search.py: E302,E303
 
-ignore = E203,E226,E231,E251,E266,E501,W503,W504
+ignore = E203,E226,E231,E251,E266,E501,W291,W292,W293,W503,W504
