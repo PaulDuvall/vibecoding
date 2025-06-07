@@ -6,3 +6,4 @@ feedparser
 openai
 requests
 tenacity
+tiktoken
