@@ -317,22 +317,6 @@ This document defines user stories for the AI Engineering platform, derived from
 
 ---
 
-### Traceability Table
-
-| User Story | Implementation Files         | Test Files                   | ATDD Features               | Docs/Links                  |
-|------------|------------------------------|------------------------------|-----------------------------|-----------------------------|
-| US-201     | summarize.py, vibe_digest.py| tests/test_summarize.py      | N/A                         |                             |
-| US-202     | vibe_digest.py              | tests/test_vibe_digest.py    | N/A                         |                             |
-| US-203     | email_utils.py, vibe_digest.py| tests/test_email_utils.py   | N/A                         |                             |
-| US-204     | README.md, user_stories.md  | N/A                          | N/A                         | docs/user_stories.md        |
-| US-301     | config_loader.py, feeds.py  | tests/features/externalized_config.feature | Load external config, Fallback to defaults, Config validation | src/config_loader.py, src/feeds.py |
-| US-302     | config_loader.py            | tests/features/externalized_config.feature | Environment variable path loading | src/config_loader.py        |
-| US-303     | config_loader.py, feeds.py  | tests/features/externalized_config.feature | Category organization, Enable/disable feeds | feeds_config.json           |
-| US-304     | config_loader.py, feeds.py  | tests/features/externalized_config.feature | Backward compatibility scenario | src/feeds.py                |
-| US-305     | config_loader.py            | tests/features/externalized_config.feature | Configuration validation scenarios | src/config_loader.py        |
-
----
-
 # Traceability Matrix
 
 This document maps user stories to their implementation files, test files, and ATDD scenarios following the ATDD-driven AI development approach described in [Paul Duvall's blog post](https://www.paulmduvall.com/atdd-driven-ai-development-how-prompting-and-tests-steer-the-code/).
