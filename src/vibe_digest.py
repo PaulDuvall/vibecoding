@@ -7,6 +7,7 @@ import os
 import sys
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from typing import List, Dict
 
 import feedparser
 from tenacity import retry, stop_after_attempt, wait_exponential
@@ -15,6 +16,7 @@ from src.feeds import FEED_SOURCES, FEEDS, fetch_all_feed_items_concurrently
 from src.models import DigestItem
 from src.summarize import summarize, summarize_concurrent, batch_summarize
 from src.email_utils import send_email
+from src.config import get_config, SummarizationRequest
 
 # Optionally import fetch_aws_blog_posts for testability
 try:
@@ -155,9 +157,124 @@ def dedupe_and_sort_items(all_items):
     return unique_items
 
 
-def summarize_items(unique_items, use_concurrent=True, use_batching=False):
+def _prepare_summarization_requests(items: List[DigestItem]) -> List[SummarizationRequest]:
     """
-    Summarize items using optimized OpenAI processing.
+    Convert DigestItem objects to SummarizationRequest objects.
+    
+    Refactoring: Extract Method to reduce complexity in summarize_items.
+    """
+    config = get_config()
+    items_to_process = items[:config.max_items]
+    
+    requests = []
+    for item in items_to_process:
+        text = (
+            f"Title: {item.title}\n"
+            f"Link: {item.link}\n"
+            f"Source: {item.source_name}\n"
+            f"Published: {item.published_date or 'N/A'}\n"
+            f"Author: {item.author or 'N/A'}\n"
+            f"Content: {item.summary}"
+        )
+        try:
+            request = SummarizationRequest(text, item.source_name, item.link)
+            requests.append(request)
+        except ValueError as e:
+            logging.warning(f"Skipping invalid item: {e}")
+            continue
+    
+    return requests
+
+
+def _try_batch_summarization(requests: List[SummarizationRequest], api_key: str) -> Dict[str, List[str]]:
+    """
+    Attempt batch summarization strategy.
+    
+    Refactoring: Extract Method to reduce duplicate error handling.
+    """
+    config = get_config()
+    summaries = {}
+    
+    if len(requests) < config.openai_batch_size:
+        raise ValueError(f"Not enough items for batching (need {config.openai_batch_size})")
+    
+    logging.info(f"Using batch summarization for {len(requests)} items")
+    
+    # Convert requests back to tuples for existing batch_summarize function
+    items_for_batch = [(req.text, req.source_name, req.source_url) for req in requests]
+    batch_results = batch_summarize(items_for_batch, api_key, batch_size=config.openai_batch_size)
+    
+    # Group results by source
+    for idx, request in enumerate(requests):
+        if idx < len(batch_results):
+            summary = batch_results[idx]
+            summaries.setdefault(request.source_name, []).append(summary)
+        else:
+            summaries.setdefault(request.source_name, []).append(f"[Summary unavailable for {request.source_name}]")
+    
+    return summaries
+
+
+def _try_concurrent_summarization(requests: List[SummarizationRequest], api_key: str) -> Dict[str, List[str]]:
+    """
+    Attempt concurrent summarization strategy.
+    
+    Refactoring: Extract Method to reduce duplicate error handling.
+    """
+    config = get_config()
+    summaries = {}
+    
+    logging.info(f"Using concurrent summarization for {len(requests)} items")
+    
+    # Convert requests back to tuples for existing summarize_concurrent function
+    items_for_concurrent = [(req.text, req.source_name, req.source_url) for req in requests]
+    concurrent_results = summarize_concurrent(
+        items_for_concurrent,
+        api_key,
+        max_workers=config.openai_max_concurrent
+    )
+    
+    # Group results by source
+    for summary, source_name, source_url in concurrent_results:
+        summaries.setdefault(source_name, []).append(summary)
+    
+    return summaries
+
+
+def _fallback_sequential_summarization(requests: List[SummarizationRequest], api_key: str) -> Dict[str, List[str]]:
+    """
+    Fallback sequential summarization strategy.
+    
+    Refactoring: Extract Method to isolate fallback logic.
+    """
+    config = get_config()
+    summaries = {}
+    
+    logging.info(f"Using sequential summarization for {len(requests)} items")
+    
+    for request in requests:
+        try:
+            summary = summarize(request.text, request.source_name, request.source_url, api_key)
+            summaries.setdefault(request.source_name, []).append(summary)
+        except Exception as exc:
+            logging.error(f"Summarize failed for {request.source_name}: {exc}")
+            summaries.setdefault(request.source_name, []).append(f"[Summary unavailable for {request.source_name}]")
+        
+        # Rate limiting for sequential processing
+        if len(summaries) >= config.max_sources:
+            logging.info(f"Reached source limit of {config.max_sources}, stopping sequential processing")
+            break
+    
+    return summaries
+
+
+def summarize_items(unique_items: List[DigestItem], use_concurrent: bool = True, use_batching: bool = False) -> Dict[str, List[str]]:
+    """
+    Summarize items using optimized OpenAI processing with configurable strategies.
+    
+    Refactoring: Simplified main method that delegates to extracted strategy methods.
+    This addresses the Long Method code smell by breaking down a 77-line function
+    into focused, single-responsibility methods.
 
     Args:
         unique_items: List of DigestItem objects
@@ -171,66 +288,36 @@ def summarize_items(unique_items, use_concurrent=True, use_batching=False):
     if not openai_api_key:
         logging.error("OPENAI_API_KEY not found")
         return {}
-    # Limit to top 15 items for processing (increased from 10)
-    items_to_process = unique_items[:15]
-    # Prepare items for processing
-    items_for_summarization = []
-    for item in items_to_process:
-        text = (
-            f"Title: {item.title}\n"
-            f"Link: {item.link}\n"
-            f"Source: {item.source_name}\n"
-            f"Published: {item.published_date or 'N/A'}\n"
-            f"Author: {item.author or 'N/A'}\n"
-            f"Content: {item.summary}"
-        )
-        items_for_summarization.append((text, item.source_name, item.link))
+    
+    requests = _prepare_summarization_requests(unique_items)
+    if not requests:
+        logging.warning("No valid items to summarize")
+        return {}
+    
     summaries = {}
-    if use_batching and len(items_for_summarization) >= 3:
-        logging.info(f"Using batch summarization for {len(items_for_summarization)} items")
+    
+    # Try batch summarization first if requested
+    if use_batching:
         try:
-            batch_results = batch_summarize(items_for_summarization, openai_api_key, batch_size=3)
-            # Group results by source
-            for idx, (text, source_name, source_url) in enumerate(items_for_summarization):
-                if idx < len(batch_results):
-                    summary = batch_results[idx]
-                    summaries.setdefault(source_name, []).append(summary)
-                else:
-                    summaries.setdefault(source_name, []).append(f"[Summary unavailable for {source_name}]")
+            summaries = _try_batch_summarization(requests, openai_api_key)
+            logging.info(f"Completed batch summarization for {len(summaries)} sources")
+            return summaries
         except Exception as e:
             logging.error(f"Batch summarization failed: {e}, falling back to concurrent")
             use_concurrent = True
-            use_batching = False
-    if use_concurrent and not use_batching:
-        logging.info(f"Using concurrent summarization for {len(items_for_summarization)} items")
+    
+    # Try concurrent summarization
+    if use_concurrent:
         try:
-            # Use concurrent processing with controlled rate limiting
-            concurrent_results = summarize_concurrent(
-                items_for_summarization,
-                openai_api_key,
-                max_workers=5  # Limit to 5 concurrent requests to respect rate limits
-            )
-            # Group results by source
-            for summary, source_name, source_url in concurrent_results:
-                summaries.setdefault(source_name, []).append(summary)
+            summaries = _try_concurrent_summarization(requests, openai_api_key)
+            logging.info(f"Completed concurrent summarization for {len(summaries)} sources")
+            return summaries
         except Exception as e:
             logging.error(f"Concurrent summarization failed: {e}, falling back to sequential")
-            use_concurrent = False
-    if not use_concurrent and not use_batching:
-        logging.info(f"Using sequential summarization for {len(items_for_summarization)} items")
-        # Original sequential processing as fallback
-        for text, source_name, source_url in items_for_summarization:
-            try:
-                summary = summarize(text, source_name, source_url, openai_api_key)
-                summaries.setdefault(source_name, []).append(summary)
-            except Exception as exc:
-                logging.error(f"Summarize failed for {source_name}: {exc}")
-                summaries.setdefault(source_name, []).append(f"[Summary unavailable for {source_name}]")
-            # Rate limiting for sequential processing
-            if len(summaries) >= 10:
-                logging.info("Reached source limit of 10, stopping sequential processing")
-                break
-    logging.info(f"Completed summarization for {len(summaries)} sources")
+    
+    # Fallback to sequential processing
+    summaries = _fallback_sequential_summarization(requests, openai_api_key)
+    logging.info(f"Completed sequential summarization for {len(summaries)} sources")
     return summaries
 
 

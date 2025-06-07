@@ -5,6 +5,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from tenacity import retry, stop_after_attempt, wait_exponential
 import hashlib
 
+from src.config import get_config
+
 
 # Initialize OpenAI client once
 _openai_client = None
@@ -28,19 +30,20 @@ _summary_cache = {}
 
 
 @retry(
-    stop=stop_after_attempt(3),
+    stop=stop_after_attempt(get_config().openai_max_retries),
     wait=wait_exponential(multiplier=1, min=2, max=10),
     reraise=True
 )
 def _make_openai_request(client: openai.OpenAI, messages: List[Dict], source_name: str) -> str:
     """Make OpenAI API request with retry logic."""
     try:
+        config = get_config()
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model=config.openai_model,
             messages=messages,
-            max_tokens=300,
-            temperature=0.7,
-            timeout=30  # Add explicit timeout
+            max_tokens=config.openai_max_tokens,
+            temperature=config.openai_temperature,
+            timeout=config.openai_timeout
         )
         return response.choices[0].message.content.strip()
     except openai.RateLimitError:
@@ -74,7 +77,8 @@ def summarize(text: str, source_name: str, source_url: str, openai_api_key: str)
         Summarized text or error message
     """
     # Truncate text for prompt to stay within token limits
-    effective_text = text[:8000]
+    config = get_config()
+    effective_text = text[:config.max_text_length]
     # Check cache first
     content_hash = _content_hash(effective_text)
     cache_key = f"{content_hash}_{source_name}"
@@ -116,9 +120,9 @@ def summarize(text: str, source_name: str, source_url: str, openai_api_key: str)
         _summary_cache[cache_key] = result
 
         # Limit cache size to prevent memory issues
-        if len(_summary_cache) > 1000:
-            # Remove oldest 100 entries
-            keys_to_remove = list(_summary_cache.keys())[:100]
+        if len(_summary_cache) > config.cache_size_limit:
+            # Remove oldest entries
+            keys_to_remove = list(_summary_cache.keys())[:config.cache_cleanup_size]
             for key in keys_to_remove:
                 del _summary_cache[key]
 
