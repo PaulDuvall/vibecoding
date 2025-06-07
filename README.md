@@ -17,7 +17,8 @@ This project uses **Windsurf** to manage and automate development standards, wor
 **Vibe Digest** is an automated content aggregation and summarization tool that delivers curated, daily email digests of the most relevant developments in AI, developer tools, and emerging technology. See [`docs/prd.md`](docs/prd.md) for the Product Requirements Document (PRD), goals, and acceptance criteria.
 
 ### Key Features
-- **RSS Feed Aggregation**: Fetches content from 25+ sources including Google Alerts, HackerNews, Reddit, YouTube, GitHub, OpenAI, Anthropic, and AWS blogs
+- **RSS Feed Aggregation**: Fetches content from 29+ sources including Google Alerts, HackerNews, Reddit, YouTube, GitHub, OpenAI, Anthropic, and AWS blogs
+- **External Feed Configuration**: Manage RSS feeds through external JSON/YAML files with categorization, enable/disable controls, and environment-based deployment support
 - **AI-Powered Summarization**: Uses OpenAI GPT-4o to create concise, contextual summaries in Paul Duvall's voice
 - **Email Delivery**: Sends mobile-optimized HTML digests daily via SendGrid
 - **AWS Blog Search**: Targeted search functionality for AWS-specific content with query matching
@@ -37,9 +38,10 @@ This project uses **Windsurf** to manage and automate development standards, wor
   - Unit Tests: [`tests/test_vibe_digest.py`](tests/test_vibe_digest.py), [`tests/test_aws_blog_search.py`](tests/test_aws_blog_search.py)
   - Integration Tests: [`tests/test_integration.py`](tests/test_integration.py)
   - Acceptance Tests: [`tests/test_acceptance.py`](tests/test_acceptance.py)
-  - Feature Specifications: [`tests/features/digest_workflow.feature`](tests/features/digest_workflow.feature)
+  - Feature Specifications: [`tests/features/digest_workflow.feature`](tests/features/digest_workflow.feature), [`tests/features/externalized_config.feature`](tests/features/externalized_config.feature)
   - CI/CD Security: [`.github/workflows/vibe-coding-digest.yml`](.github/workflows/vibe-coding-digest.yml) (Gitleaks secrets scanning)
   - Product requirements: [`docs/prd.md`](docs/prd.md)
+  - User Stories & Traceability: [`docs/user_stories.md`](docs/user_stories.md), [`docs/traceability_matrix.md`](docs/traceability_matrix.md)
 
 ### Required Secrets for Deployment
 Set the following secrets in your GitHub repository for the workflow to function:
@@ -79,6 +81,90 @@ Set the following secrets in your GitHub repository for the workflow to function
    Trigger the workflow or run the script locally. Check your inbox for the digest.
 
 **Tip:** For best deliverability, use domain authentication and a sender address at your own domain.
+
+---
+
+## Feed Configuration Management
+
+The system supports flexible feed configuration through external JSON or YAML files while maintaining full backward compatibility with hardcoded feeds.
+
+### Configuration Options
+
+**1. External Configuration (Recommended)**
+- Create a `feeds_config.json` or `feeds_config.yaml` file in the project root
+- Supports feed categorization (AI, DevTools, Community, YouTube, Blogs)
+- Individual feed enable/disable controls
+- Environment-specific configurations
+
+**2. Environment Variable Path**
+- Set `VIBE_CONFIG_PATH` to specify a custom configuration file location
+- Useful for deployment across different environments (dev, staging, prod)
+
+**3. Automatic Fallback**
+- If no external configuration is found, the system uses built-in hardcoded feeds
+- Zero breaking changes for existing deployments
+
+### Configuration File Format
+
+```json
+{
+  "feeds": [
+    {
+      "url": "https://openai.com/news/rss.xml",
+      "source_name": "OpenAI News",
+      "category": "AI",
+      "enabled": true
+    },
+    {
+      "url": "https://github.blog/feed/",
+      "source_name": "GitHub Blog", 
+      "category": "DevTools",
+      "enabled": false
+    }
+  ]
+}
+```
+
+Or in YAML format:
+```yaml
+feeds:
+  - url: "https://openai.com/news/rss.xml"
+    source_name: "OpenAI News"
+    category: "AI"
+    enabled: true
+  - url: "https://github.blog/feed/"
+    source_name: "GitHub Blog"
+    category: "DevTools"
+    enabled: false
+```
+
+### Managing Feeds
+
+**Adding New Feeds:**
+1. Edit your configuration file (`feeds_config.json` or `feeds_config.yaml`)
+2. Add the new feed with appropriate category and source name
+3. Set `enabled: true` to include it in the digest
+
+**Categorizing Feeds:**
+- `AI`: AI research, news, and development content
+- `DevTools`: Developer tools, IDEs, and programming utilities  
+- `Community`: Reddit, Hacker News, and community discussions
+- `YouTube`: Video content from AI and tech channels
+- `Blogs`: Official company and personal blogs
+- `General`: Uncategorized content
+
+**Disabling Feeds:**
+- Set `enabled: false` to temporarily exclude feeds without removing them
+- Useful for testing or seasonal content adjustments
+
+### Default Configuration
+
+The project includes a comprehensive [`feeds_config.json`](feeds_config.json) with 29 pre-configured feeds across all categories. This file serves as both the default configuration and a template for customization.
+
+**Note on Google Alerts**: The default configuration includes example Google Alert feeds. For production use, you should:
+1. Create your own Google Alerts (see section below)
+2. Use environment-specific configuration files (e.g., `feeds_config.personal.json`)
+3. Set the `VIBE_CONFIG_PATH` environment variable to point to your personal configuration
 
 ---
 
@@ -134,11 +220,25 @@ You can use Google Alerts to track news, blogs, and forum posts for any search t
    - After creating the alert, you’ll see it listed with an RSS icon next to it.
    - Right-click the RSS icon and copy the link address (it will look like `https://www.google.com/alerts/feeds/XXXXXXXX/XXXXXXXX`).
 
-4. **Add the Feed to Your Digest:**
-   - Add the RSS URL to your `FEEDS` list in `vibe_digest.py`.
-   - Add a human-friendly name to `FEED_SOURCES` in the same file for clarity.
+4. **Add the Feed to Your Configuration:**
+   - **Recommended**: Add the RSS URL to your `feeds_config.json` file with appropriate categorization.
+   - **Alternative**: Add the RSS URL to the `FEEDS` list in `src/feeds.py` (legacy method).
 
-**Example:**
+**Example (External Configuration - Recommended):**
+```json
+{
+  "feeds": [
+    {
+      "url": "https://www.google.com/alerts/feeds/11805205268710618137/2009129731931801714",
+      "source_name": "Google Alerts: Vibe Coding",
+      "category": "AI",
+      "enabled": true
+    }
+  ]
+}
+```
+
+**Example (Legacy Hardcoded):**
 ```python
 FEEDS = [
     # ...other feeds...

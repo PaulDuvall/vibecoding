@@ -82,6 +82,15 @@ local_config.*
 *.tmp
 *.orig
 
+# Environment-specific feed configurations (keep default feeds_config.json tracked)
+feeds_config.local.*
+feeds_config.dev.*
+feeds_config.staging.*
+feeds_config.prod.*
+feeds_config.personal.*
+config/feeds.*
+custom_feeds.*
+
 # Documentation build
 _site/
 
