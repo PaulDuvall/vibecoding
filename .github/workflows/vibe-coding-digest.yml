@@ -47,10 +47,21 @@ jobs:
           flake8 src/
           pytest -v --cov=src tests/
           
-      - name: Run Acceptance Tests
+      - name: Run Acceptance Tests (Pytest)
         run: |
           export PYTHONPATH=$PYTHONPATH:$(pwd)
           pytest -v tests/test_acceptance.py
+          
+      - name: Run ATDD Tests (Behave) - Basic Scenario
+        run: |
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          # Set mock environment variables for ATDD tests
+          export OPENAI_API_KEY="test-key"
+          export EMAIL_TO="test@example.com" 
+          export EMAIL_FROM="from@example.com"
+          export SENDGRID_API_KEY="test-sendgrid-key"
+          # Run a basic scenario to verify ATDD infrastructure works
+          python -m behave tests/features/digest_workflow.feature:11 --format=plain --no-capture
 
       - name: Run Digest Script
         env:

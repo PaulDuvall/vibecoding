@@ -8,7 +8,7 @@ Feature: Daily Digest Generation and Delivery
     And the recipient email is configured
     And RSS feeds are accessible
 
-  Scenario: Complete daily digest workflow execution
+  Scenario: US-001 US-003 - Complete daily digest workflow execution
     Given multiple RSS feeds are available with recent content
     And the OpenAI API is responding normally
     And SendGrid email service is operational
@@ -21,7 +21,7 @@ Feature: Daily Digest Generation and Delivery
     And the email should contain content from multiple sources
     And each article should include source attribution and links
 
-  Scenario: Digest generation with some feed failures
+  Scenario: US-007 - Digest generation with some feed failures
     Given some RSS feeds are temporarily unavailable
     And other RSS feeds are accessible with content
     And the OpenAI API is responding normally
@@ -33,7 +33,7 @@ Feature: Daily Digest Generation and Delivery
     And the email should be sent successfully
     And the digest should indicate if some sources were unavailable
 
-  Scenario: OpenAI API rate limiting scenario
+  Scenario: US-002 US-007 - OpenAI API rate limiting scenario
     Given RSS feeds are accessible with content
     And the OpenAI API returns rate limiting errors
     And SendGrid email service is operational
@@ -43,7 +43,7 @@ Feature: Daily Digest Generation and Delivery
     And the digest should still be generated and sent
     And the rate limiting should be logged appropriately
 
-  Scenario: Email delivery failure handling
+  Scenario: US-003 US-007 - Email delivery failure handling
     Given RSS feeds are accessible with content
     And articles are successfully summarized
     And SendGrid API returns delivery errors
@@ -53,7 +53,7 @@ Feature: Daily Digest Generation and Delivery
     And the system should attempt retry with exponential backoff
     And if delivery ultimately fails, the error should be properly reported
 
-  Scenario: Content deduplication across sources
+  Scenario: US-001 - Content deduplication across sources
     Given multiple RSS feeds contain the same article
     And the OpenAI API is responding normally
     And SendGrid email service is operational
@@ -63,7 +63,7 @@ Feature: Daily Digest Generation and Delivery
     And the most complete version of duplicate articles should be preserved
     And source attribution should reflect the primary source
 
-  Scenario: AWS blog search integration
+  Scenario: US-001 - AWS blog search integration
     Given AWS blog search is configured with relevant queries
     And AWS RSS feeds are accessible
     And regular RSS feeds are also accessible
@@ -74,7 +74,7 @@ Feature: Daily Digest Generation and Delivery
     And duplicate content between AWS search and regular feeds should be removed
     And AWS content should be clearly labeled as such
 
-  Scenario: Mobile-optimized email formatting
+  Scenario: US-003 - Mobile-optimized email formatting
     Given content has been successfully aggregated and summarized
     And the email generation process is executed
     When the HTML email is generated
@@ -84,7 +84,7 @@ Feature: Daily Digest Generation and Delivery
     And the font size should be readable on small screens
     And the email structure should be compatible with major email clients
 
-  Scenario: Performance requirements for digest generation
+  Scenario: US-002 US-012 - Performance requirements for digest generation
     Given all RSS feeds are accessible (25+ sources)
     And the OpenAI API is responding normally
     And SendGrid email service is operational
@@ -94,7 +94,7 @@ Feature: Daily Digest Generation and Delivery
     And the system should handle network timeouts gracefully
     And memory usage should remain within reasonable limits
 
-  Scenario: Digest content quality validation
+  Scenario: US-002 - Digest content quality validation
     Given RSS feeds contain technical content about AI and developer tools
     And the OpenAI API is responding normally
     When articles are summarized

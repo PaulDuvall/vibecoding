@@ -1,0 +1,6 @@
+[behave]
+paths = tests/features
+show_timings = true
+show_skipped = false
+format = pretty
+logging_level = INFO

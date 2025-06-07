@@ -1,13 +1,13 @@
-# User Stories – Vibe Digest
+# User Stories – AI Engineering Platform
 
-This document defines user stories for the Vibe Digest system, derived from the Product Requirements Document (PRD). Each story includes a unique ID, user story, acceptance criteria, and traceability links (to be updated as implementation progresses).
+This document defines user stories for the AI Engineering platform, derived from the Product Requirements Document (PRD). Each story includes a unique ID, user story, acceptance criteria, and traceability links (to be updated as implementation progresses).
 
 ---
 
-## US-001: Content Aggregation
-**As** a busy tech founder, engineer, or AI practitioner,
-**I want** the system to fetch and parse content daily from prioritized sources (Cursor Blog, Windsurf Blog, Latent Space, Reddit, Hacker News),
-**so that** I receive a curated digest of the most relevant updates.
+## US-001: AI Engineering Content Aggregation
+**As** a developer transitioning to AI Engineering,
+**I want** the system to fetch and parse content daily from AI Engineering tool sources (Cursor, Windsurf, Claude Code, Copilot, Jules, r/AIDevelopment, Hacker News AI threads),
+**so that** I receive curated updates focused on AI development tools and practices.
 
 **Acceptance Criteria:**
 - System fetches content from all listed sources at least once per day
@@ -16,10 +16,10 @@ This document defines user stories for the Vibe Digest system, derived from the 
 
 ---
 
-## US-002: AI-Powered Summarization
-**As** a recipient of the Vibe Digest,
-**I want** the system to generate concise, context-rich summaries using GPT-4,
-**so that** I can quickly understand the key insights from each article.
+## US-002: AI-Powered Summarization with Performance Optimization
+**As** a recipient of the AI Engineering digest,
+**I want** the system to generate concise, context-rich summaries using async processing and smart batching,
+**so that** I can quickly understand key AI Engineering insights with 3-5x faster processing and 30-40% cost reduction.
 
 **Acceptance Criteria:**
 - Summaries are generated for each fetched article
@@ -28,10 +28,10 @@ This document defines user stories for the Vibe Digest system, derived from the 
 
 ---
 
-## US-003: Daily Email Delivery
-**As** a user,
-**I want** to receive a daily HTML email digest,
-**so that** I can read the latest updates in a mobile-optimized, readable format.
+## US-003: AI Engineering Weekly Newsletter
+**As** a developer learning AI Engineering,
+**I want** to receive a weekly HTML email digest with tool updates, implementation patterns, and platform development insights,
+**so that** I can stay current with AI-assisted development trends and practices.
 
 **Acceptance Criteria:**
 - Email is sent daily via SendGrid
@@ -90,7 +90,59 @@ This document defines user stories for the Vibe Digest system, derived from the 
 
 ---
 
-## US-008: Performance & Success Metrics
+## US-008: Tool Comparison Matrix
+**As** a developer choosing AI Engineering tools,
+**I want** an interactive comparison grid of IDE plugins (Cursor vs. Windsurf vs. Claude Code vs. GitHub Copilot),
+**so that** I can make informed decisions based on feature analysis, model performance, and community reviews.
+
+**Acceptance Criteria:**
+- Comparison matrix covers autocomplete, refactoring, test generation, debugging features
+- Includes model performance comparisons (Claude vs. GPT vs. Gemini)
+- Supports community-submitted prompts and performance ratings
+- Updates automatically with new tool releases
+
+---
+
+## US-009: AI Engineering Roadmap
+**As** a traditional software engineer,
+**I want** a structured learning path from SWE to AI Engineer,
+**so that** I can systematically develop AI Engineering skills.
+
+**Acceptance Criteria:**
+- Roadmap covers foundations (LLMs, tokens, embeddings, prompt engineering)
+- Includes tools mastery section (IDE setup, agent workflows, automation)
+- Provides advanced topics (custom agents, fine-tuning, production deployment)
+- Links to practical examples and starter kits
+
+---
+
+## US-010: Behind-the-Build Devlogs
+**As** a developer learning AI-assisted development,
+**I want** transparent documentation showing how platform features are built with AI tools,
+**so that** I can learn from real implementation examples.
+
+**Acceptance Criteria:**
+- Each platform feature documented with prompts → code → results
+- Includes real tool usage examples (Windsurf sessions, Claude Code interactions)
+- Documents iteration stories, challenges, failures, and AI-assisted solutions
+- Shows performance optimization processes
+
+---
+
+## US-011: Starter Kits & Templates
+**As** a developer adopting AI Engineering practices,
+**I want** AI-built development resources and templates,
+**so that** I can quickly start projects using best practices.
+
+**Acceptance Criteria:**
+- ATDD + AI pipeline templates for test-driven development with AI agents
+- Multi-tool setup guides (Cursor + Claude Code + GitHub Actions)
+- Performance monitoring templates for AI cost tracking and optimization
+- All templates include implementation documentation
+
+---
+
+## US-012: Performance & Success Metrics
 **As** a stakeholder,
 **I want** the system to meet key performance and reliability targets,
 **so that** it delivers value with high quality.
@@ -99,7 +151,9 @@ This document defines user stories for the Vibe Digest system, derived from the 
 - Digest retrieval latency is < 1 second
 - Data durability is ≥ 99.9%
 - Web “History” page loads in < 500 ms
-- Email open rate > 50%, CTR > 10%, daily content freshness > 90%, <1% failure rate in CI/CD
+- Newsletter open rate > 50%, website CTR > 10%, time on site > 2 minutes, return visitor rate > 30%
+- Monthly active users > 5,000 within 6 months, newsletter subscribers > 1,000 within 3 months
+- API response time < 2 seconds, daily content freshness > 90%, <1% failure rate in CI/CD
 
 ---
 

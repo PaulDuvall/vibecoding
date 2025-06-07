@@ -2,6 +2,7 @@ pytest
 flake8
 pytest-mock
 pytest-cov
+behave
 feedparser
 openai
 requests

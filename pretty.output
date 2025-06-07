@@ -1,0 +1,83 @@
+Feature: Daily Digest Generation and Delivery # tests/features/digest_workflow.feature:1
+  As a content consumer interested in AI and developer tools
+  I want to receive a daily email digest with curated, summarized content
+  So that I can stay updated on the latest developments efficiently
+  Background:   # tests/features/digest_workflow.feature:6
+
+  Scenario: US-001 US-003 - Complete daily digest workflow execution        # tests/features/digest_workflow.feature:11
+    Given the system has valid API keys for OpenAI and SendGrid             # tests/features/steps/digest_steps.py:12
+    And the recipient email is configured                                   # tests/features/steps/digest_steps.py:26
+    And RSS feeds are accessible                                            # tests/features/steps/digest_steps.py:32
+    Given multiple RSS feeds are available with recent content              # tests/features/steps/digest_steps.py:66
+    And the OpenAI API is responding normally                               # tests/features/steps/digest_steps.py:73
+    And SendGrid email service is operational                               # tests/features/steps/digest_steps.py:87
+    When the daily digest generation process is executed                    # tests/features/steps/digest_steps.py:95
+    Then content should be fetched from all configured RSS feeds            # tests/features/steps/digest_steps.py:166
+      Assertion Failed: Digest generation failed: '<' not supported between instances of 'Mock' and 'Mock'
+      Captured logging:
+      INFO:root:Fetching feed: https://www.google.com/alerts/feeds/11805205268710618137/2009129731931801714
+      INFO:root:Fetching feed: https://www.google.com/alerts/feeds/11805205268710618137/13681474149755866365
+      INFO:root:Successfully fetched 2 items from Google Alerts: Vibe Coding (https://www.google.com/alerts/feeds/11805205268710618137/2009129731931801714)
+      INFO:root:Fetching feed: https://www.google.com/alerts/feeds/11805205268710618137/6447382119890310773
+      INFO:root:Successfully fetched 2 items from Google Alerts: Vibe Coding DevOps (https://www.google.com/alerts/feeds/11805205268710618137/13681474149755866365)
+      INFO:root:Fetching feed: https://www.google.com/alerts/feeds/11805205268710618137/13093926530832902642
+      INFO:root:Fetching feed: https://www.google.com/alerts/feeds/11805205268710618137/17153509184522491480
+      INFO:root:Fetching feed: https://www.cursor.sh/blog/rss.xml
+      INFO:root:Successfully fetched 2 items from Google Alerts: Vibe Coding Security (https://www.google.com/alerts/feeds/11805205268710618137/6447382119890310773)
+      INFO:root:Fetching feed: https://windsurf.com/blog/rss.xml
+      INFO:root:Successfully fetched 2 items from Google Alerts: Vibe Coding DevSecOps (https://www.google.com/alerts/feeds/11805205268710618137/13093926530832902642)
+      INFO:root:Successfully fetched 2 items from Google Alerts: OpenAI (https://www.google.com/alerts/feeds/11805205268710618137/17153509184522491480)
+      INFO:root:Successfully fetched 2 items from Cursor Blog (https://www.cursor.sh/blog/rss.xml)
+      INFO:root:Fetching feed: https://latent.space/feed
+      INFO:root:Successfully fetched 2 items from Windsurf Blog (https://windsurf.com/blog/rss.xml)
+      INFO:root:Fetching feed: https://hnrss.org/newest?q=cursor+IDE&points=50
+      INFO:root:Fetching feed: https://hnrss.org/newest?q=AI+coding&points=50
+      INFO:root:Fetching feed: https://www.reddit.com/r/vibecoding/.rss
+      INFO:root:Successfully fetched 2 items from Latent Space (Substack) (https://latent.space/feed)
+      INFO:root:Fetching feed: https://github.com/search?q=vibe+coding&type=repositories&format=rss
+      INFO:root:Successfully fetched 2 items from Hacker News (Cursor IDE) (https://hnrss.org/newest?q=cursor+IDE&points=50)
+      INFO:root:Successfully fetched 2 items from Hacker News (AI Coding) (https://hnrss.org/newest?q=AI+coding&points=50)
+      INFO:root:Successfully fetched 2 items from Reddit /r/vibecoding (https://www.reddit.com/r/vibecoding/.rss)
+      INFO:root:Fetching feed: https://hnrss.org/newest?q=github+copilot&points=50
+      INFO:root:Successfully fetched 2 items from GitHub Search (Vibe Coding) (https://github.com/search?q=vibe+coding&type=repositories&format=rss)
+      INFO:root:Fetching feed: https://www.reddit.com/search.rss?q=github+copilot&sort=hot
+      INFO:root:Fetching feed: https://github.blog/feed/
+      INFO:root:Fetching feed: https://github-trending-api.now.sh/repositories?language=python&since=daily
+      INFO:root:Successfully fetched 2 items from Hacker News (GitHub Copilot) (https://hnrss.org/newest?q=github+copilot&points=50)
+      INFO:root:Fetching feed: https://www.youtube.com/feeds/videos.xml?channel_id=UCtzS3R3_eB0JgE-hM8mX8XQ
+      INFO:root:Successfully fetched 2 items from Reddit Search (GitHub Copilot) (https://www.reddit.com/search.rss?q=github+copilot&sort=hot)
+      INFO:root:Successfully fetched 2 items from GitHub Blog (https://github.blog/feed/)
+      INFO:root:Successfully fetched 2 items from GitHub Trending (Python, daily) (https://github-trending-api.now.sh/repositories?language=python&since=daily)
+      INFO:root:Fetching feed: https://www.youtube.com/feeds/videos.xml?channel_id=UCuTaETsuCOh0P_XJg_i0wFQ
+      INFO:root:Successfully fetched 2 items from YouTube: Yannic Kilcher (https://www.youtube.com/feeds/videos.xml?channel_id=UCtzS3R3_eB0JgE-hM8mX8XQ)
+      INFO:root:Fetching feed: https://www.youtube.com/feeds/videos.xml?channel_id=UC6YI7W9_UuP5sF98d7_k5GA
+      INFO:root:Fetching feed: https://www.youtube.com/feeds/videos.xml?channel_id=UCP_r0x3Y8S_D_h_FmYqg4Gw
+      INFO:root:Fetching feed: https://www.producthunt.com/topics/artificial-intelligence.rss
+      INFO:root:Successfully fetched 2 items from YouTube: Two Minute Papers (https://www.youtube.com/feeds/videos.xml?channel_id=UCuTaETsuCOh0P_XJg_i0wFQ)
+      INFO:root:Fetching feed: https://www.reddit.com/r/MachineLearning/.rss
+      INFO:root:Successfully fetched 2 items from YouTube: OpenAI (https://www.youtube.com/feeds/videos.xml?channel_id=UC6YI7W9_UuP5sF98d7_k5GA)
+      INFO:root:Successfully fetched 2 items from YouTube: Latent Space Podcast (https://www.youtube.com/feeds/videos.xml?channel_id=UCP_r0x3Y8S_D_h_FmYqg4Gw)
+      INFO:root:Successfully fetched 2 items from Product Hunt: AI (https://www.producthunt.com/topics/artificial-intelligence.rss)
+      INFO:root:Fetching feed: https://www.reddit.com/r/artificial/.rss
+      INFO:root:Successfully fetched 2 items from Reddit: MachineLearning (https://www.reddit.com/r/MachineLearning/.rss)
+      INFO:root:Fetching feed: https://www.reddit.com/r/programming/.rss
+      INFO:root:Fetching feed: https://openai.com/news/rss.xml
+      INFO:root:Fetching feed: https://www.anthropic.com/news/feed.xml
+      INFO:root:Successfully fetched 2 items from Reddit: Artificial Intelligence (https://www.reddit.com/r/artificial/.rss)
+      INFO:root:Fetching feed: https://ai.googleblog.com/feeds/posts/default
+      INFO:root:Successfully fetched 2 items from Reddit: Programming (https://www.reddit.com/r/programming/.rss)
+      INFO:root:Successfully fetched 2 items from OpenAI News (https://openai.com/news/rss.xml)
+      INFO:root:Successfully fetched 2 items from Anthropic Blog (https://www.anthropic.com/news/feed.xml)
+      INFO:root:Fetching feed: https://github.com/langchain-ai/langchain/releases.atom
+      INFO:root:Successfully fetched 2 items from Google AI Blog (https://ai.googleblog.com/feeds/posts/default)
+      INFO:root:Fetching feed: https://github.com/microsoft/autogen/releases.atom
+      INFO:root:Successfully fetched 2 items from GitHub Releases: LangChain (https://github.com/langchain-ai/langchain/releases.atom)
+      INFO:root:Successfully fetched 2 items from GitHub Releases: AutoGen (https://github.com/microsoft/autogen/releases.atom)
+
+    And articles should be summarized using OpenAI with Paul Duvall's voice # None
+    And a properly formatted HTML email should be generated                 # None
+    And the email should be sent successfully via SendGrid                  # None
+    And the email subject should include the current date in Eastern Time   # None
+    And the email should contain content from multiple sources              # None
+    And each article should include source attribution and links            # None
+
