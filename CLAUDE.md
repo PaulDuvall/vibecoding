@@ -67,12 +67,24 @@ vibecoding/
 - **Testing**: Pytest with coverage reporting
 - **Documentation**: Comprehensive docstrings and comments
 
+### Development Rules & Guidelines
+The project follows comprehensive development standards defined in specialized rule files:
+
+- **CI/CD Practices**: [`.cicdrules.md`](.cicdrules.md) - Complete CI/CD best practices framework with 95 rules covering build quality, security, automation, and delivery excellence
+- **ATDD/BDD Development**: [`.attdrules.md`](.attdrules.md) - Acceptance Test-Driven Development methodology for AI-assisted development with executable specifications
+- **Code Quality & Refactoring**: [`.refactoringrules.md`](.refactoringrules.md) - Comprehensive catalog of code smells and refactoring techniques based on Martin Fowler's catalog
+- **AWS Security**: [`.awssecurityrules.md`](.awssecurityrules.md) - MECE framework for AWS security best practices covering IAM, infrastructure protection, data security, and compliance
+- **IAM Role Management**: [`.iamrolerules.md`](.iamrolerules.md) - Guidelines for creating, refining, and maintaining AWS IAM roles and policies with least-privilege principles
+
+All contributors must follow these specialized rules in addition to the standards outlined in this document.
+
 ### Testing Standards
-- **ATDD-Driven Development**: Write Gherkin feature specifications before implementation
+- **ATDD-Driven Development**: Write Gherkin feature specifications before implementation (see [`.attdrules.md`](.attdrules.md))
 - **Test Coverage**: Pytest-cov integration with HTML reports  
 - **Test Types**: Unit, integration, and acceptance tests with user story traceability
 - **Mock Strategy**: Comprehensive external service mocking
 - **User Story Mapping**: Each test maps to specific user stories (US-001 through US-305)
+- **Code Quality**: Follow refactoring guidelines from [`.refactoringrules.md`](.refactoringrules.md) to maintain clean, testable code
 
 ## Development Workflow
 
@@ -156,7 +168,7 @@ EMAIL_TO            # Recipient email address
 ## CI/CD Pipeline
 
 ### GitHub Actions Workflow
-1. **Security Checks**: Secrets scanning and SAST
+1. **Security Checks**: Secrets scanning and SAST (per [`.cicdrules.md`](.cicdrules.md) security requirements)
 2. **Environment Setup**: Python 3.11 + dependency installation
 3. **Quality Checks**: Linting (flake8) and testing (pytest)
 4. **Digest Execution**: Automated daily digest generation
@@ -166,7 +178,9 @@ EMAIL_TO            # Recipient email address
 - All tests must pass before deployment
 - Linting compliance required
 - Coverage reporting included
-- No secrets in codebase (automated scanning)
+- No secrets in codebase (automated scanning per [`.cicdrules.md`](.cicdrules.md))
+- Security best practices enforced (see [`.awssecurityrules.md`](.awssecurityrules.md))
+- IAM roles follow least-privilege principles ([`.iamrolerules.md`](.iamrolerules.md))
 
 ## Architectural Improvements Implemented
 
@@ -199,16 +213,21 @@ EMAIL_TO            # Recipient email address
 ## Security Practices
 
 ### Secret Management
-- No credentials in codebase
+- No credentials in codebase (enforced by [`.cicdrules.md`](.cicdrules.md) security scanning)
 - Environment variable injection
 - `.gitignore` properly configured
 - Automated secrets scanning in CI/CD
 
 ### API Security
 - Proper error handling for API failures
-- Rate limiting considerations
+- Rate limiting considerations (see [`.refactoringrules.md`](.refactoringrules.md) for API patterns)
 - Timeout configurations
 - Retry logic with exponential backoff
+
+### AWS Security
+- Follow comprehensive security framework from [`.awssecurityrules.md`](.awssecurityrules.md)
+- IAM roles designed with least-privilege per [`.iamrolerules.md`](.iamrolerules.md)
+- Infrastructure protection and data encryption standards
 
 ## Performance Considerations
 
@@ -248,6 +267,19 @@ EMAIL_TO            # Recipient email address
 - Template customization
 - Multi-format output support
 - Advanced caching strategies
+
+## Rule Enforcement & Compliance
+
+### Automated Checks
+- **CI/CD compliance** verified against [`.cicdrules.md`](.cicdrules.md) standards
+- **Code quality** monitored using [`.refactoringrules.md`](.refactoringrules.md) smell detection
+- **Security scanning** per [`.awssecurityrules.md`](.awssecurityrules.md) guidelines
+- **ATDD practices** following [`.attdrules.md`](.attdrules.md) methodology
+
+### Manual Reviews
+- All PRs reviewed for compliance with specialized rule files
+- Security practices validated against AWS security framework
+- IAM changes reviewed per [`.iamrolerules.md`](.iamrolerules.md) guidelines
 
 ---
 

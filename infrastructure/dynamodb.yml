@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'DynamoDB table for Vibe Coding Digest persistence (US-004-001)'
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+    Description: Environment name for resource naming
+
+Resources:
+  VibeDigestTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'VibeDigest-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: digest_date
+          AttributeType: S
+        - AttributeName: item_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: digest_date
+          KeyType: HASH
+        - AttributeName: item_id
+          KeyType: RANGE
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+      Tags:
+        - Key: Project
+          Value: VibeCodingDigest
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: UserStory
+          Value: US-004-001
+        - Key: ManagedBy
+          Value: CloudFormation
+
+Outputs:
+  TableName:
+    Description: Name of the DynamoDB table
+    Value: !Ref VibeDigestTable
+    Export:
+      Name: !Sub '${AWS::StackName}-TableName'
+  
+  TableArn:
+    Description: ARN of the DynamoDB table
+    Value: !GetAtt VibeDigestTable.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-TableArn'
