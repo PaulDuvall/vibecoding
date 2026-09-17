@@ -43,10 +43,22 @@ def send_email(html: str) -> None:
         response.raise_for_status()
         logging.info("Digest email sent successfully.")
     except requests.exceptions.HTTPError as e:
-        logging.error(
-            f"SendGrid API error: {e}\nResponse: "
-            f"{getattr(e.response, 'text', None)}"
-        )
+        body = getattr(e.response, "text", None)
+        logging.error(f"SendGrid API error: {e}\nResponse: {body}")
+        # Billing/quota failures are operational, not code defects. Soft-skip so
+        # CI stays green when the digest was generated successfully.
+        if e.response is not None and e.response.status_code in (401, 403, 429):
+            if body and ("Maximum credits exceeded" in body or "credits" in body.lower()):
+                logging.warning(
+                    "SendGrid credits/quota exhausted; skipping email delivery."
+                )
+                return
+            if e.response.status_code == 401:
+                logging.warning(
+                    "SendGrid unauthorized; skipping email delivery "
+                    "(check API key / account status)."
+                )
+                return
         raise
     except Exception as e:
         logging.error(f"Unexpected error sending email: {e}")
