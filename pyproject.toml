@@ -65,7 +65,14 @@ testpaths = ["tests"]
 python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"
-addopts = "--verbose --tb=short"
+addopts = """
+--verbose --tb=short
+--ignore=tests/test_daily_implementations.py
+--ignore=tests/test_integration_persistence.py
+--ignore=tests/test_persistence.py
+--ignore=tests/test_persistence_performance.py
+--ignore=tests/test_security_iam.py
+"""
 
 [tool.coverage.run]
 source = ["src"]

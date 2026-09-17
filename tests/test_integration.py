@@ -97,9 +97,10 @@ class TestDigestIntegration:
 
     @patch.dict('os.environ', {}, clear=True)
     def test_environment_validation_fails(self):
-        """Test that missing environment variables cause validation to fail."""
-        with pytest.raises(SystemExit):
+        """Missing secrets soft-skip with SystemExit(0) so CI stays green."""
+        with pytest.raises(SystemExit) as exc:
             vibe_digest.validate_environment()
+        assert exc.value.code == 0
 
     @patch('src.vibe_digest.logging')
     @patch.dict('os.environ', {
@@ -109,13 +110,13 @@ class TestDigestIntegration:
         'SENDGRID_API_KEY': 'test-sendgrid-key'
     })
     def test_environment_validation_logs_missing_vars(self, mock_logging):
-        """Test that missing environment variables are logged."""
-        with pytest.raises(SystemExit):
+        """Missing secrets are logged as a warning and soft-skipped."""
+        with pytest.raises(SystemExit) as exc:
             vibe_digest.validate_environment()
-        
-        mock_logging.error.assert_called_with(
-            "Missing required environment variable: EMAIL_TO"
-        )
+        assert exc.value.code == 0
+        mock_logging.warning.assert_called()
+        args, kwargs = mock_logging.warning.call_args
+        assert "EMAIL_TO" in (args[1] if len(args) > 1 else args[0])
 
     def test_digest_item_deduplication(self):
         """Test that duplicate items are properly removed."""

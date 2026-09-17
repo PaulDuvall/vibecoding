@@ -5,7 +5,7 @@ US-004-003: Implement Basic DynamoDB Connection
 
 import logging
 import os
-from typing import Optional, Dict, Any
+from typing import Dict, Any
 
 import boto3
 from botocore.exceptions import ClientError, NoCredentialsError
